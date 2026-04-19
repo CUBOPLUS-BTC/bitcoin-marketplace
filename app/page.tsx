@@ -1,180 +1,146 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import { MultisigSetupForm } from "@/components/multisig/MultisigSetupForm";
-import { EscrowStatusCard } from "@/components/multisig/EscrowStatusCard";
-import { PSBTSignModal } from "@/components/multisig/PSBTSignModal";
-import { ArbitratorDesk } from "@/components/multisig/ArbitratorDesk";
-import { useMultisigStore } from "@/store/useMultisigStore";
-import { cn } from "@/lib/utils";
-
-// Mock events for the ArbitratorDesk
-const mockEvents = [
-  {
-    id: "1",
-    title: "Vínculo de Escrow Creado",
-    timestamp: "Hace 2 horas",
-    description: "Contrato multifirma 2-de-3 generado exitosamente.",
-    type: "success" as const,
-  },
-  {
-    id: "2",
-    title: "Pendiente de Fondeo",
-    timestamp: "Hace 1 hora",
-    description: "Esperando depósito del comprador en la dirección P2WSH.",
-    type: "info" as const,
-  },
-];
+import React from "react";
+import Link from "next/link";
+import { MarketplaceNavbar } from "@/components/layout/MarketplaceNavbar";
+import { MarketplaceFooter } from "@/components/layout/MarketplaceFooter";
 
 export default function Home() {
-  const { 
-    step, 
-    setStep, 
-    contractParams, 
-    escrowState, 
-    signPSBT, 
-    fetchStatus,
-    isLoading,
-    resetStore
-  } = useMultisigStore();
-
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
-  // Polling for status when in escrow view
-  useEffect(() => {
-    let interval: NodeJS.Timeout;
-    if (step === 'escrow' && contractParams.id) {
-      fetchStatus(); // Call immediately
-      interval = setInterval(() => {
-        fetchStatus();
-      }, 10000); // Check every 10 seconds
-    }
-    return () => clearInterval(interval);
-  }, [step, contractParams.id, fetchStatus]);
-
-  const handleSignTransaction = async () => {
-    // In a real app, the PSBT would be fetched from the backend or status
-    // For this demo, we assume a PSBT is available to sign
-    const dummyPsbtHex = "70736274ff010074...dummy_psbt_hex"; 
-    
-    try {
-      await signPSBT(dummyPsbtHex);
-      setIsModalOpen(false);
-    } catch (error) {
-      // Error is handled in the store and displayed in the UI if needed
-    }
-  };
-
   return (
-    <div className="min-h-screen bg-background text-foreground flex flex-col items-center bg-mesh bg-grain">
-      {/* Header Navigation */}
-      <header className="w-full border-b border-white/5 glass-panel sticky top-0 z-40">
-        <div className="max-w-5xl mx-auto px-6 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-2 cursor-pointer" onClick={resetStore}>
-            <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
-              <span className="font-bold text-primary-foreground text-sm">S</span>
-            </div>
-            <span className="font-bold tracking-tight text-lg">Satsy Escrow</span>
-          </div>
-
-          <nav className="flex gap-1 bg-secondary/50 p-1 rounded-lg border border-border">
-            {(["setup", "escrow", "dispute"] as const).map((tab) => (
-              <button
-                key={tab}
-                onClick={() => setStep(tab as any)}
-                className={cn(
-                  "px-4 py-1.5 rounded-md text-xs font-bold uppercase tracking-wider transition-all",
-                  step === tab
-                    ? "bg-card text-foreground shadow-sm border border-border"
-                    : "text-muted-foreground hover:text-foreground"
-                )}
-              >
-                {tab === 'dispute' ? 'arbitrator' : tab}
-              </button>
-            ))}
-          </nav>
-        </div>
-      </header>
-
-      {/* Main Content Area */}
-      <main className="flex-1 w-full max-w-5xl px-6 py-12 flex flex-col items-center">
+    <div className="antialiased min-h-screen flex flex-col bg-[#0e0e10] text-[#e7e4ea]">
+      <MarketplaceNavbar />
+      
+      {/* Main Content */}
+      <main className="flex-grow flex flex-col items-center w-full max-w-[1440px] mx-auto px-8 py-12 gap-16">
         
-        {/* Step 1: Setup */}
-        {step === "setup" && (
-          <div className="w-full flex justify-center animate-in fade-in slide-in-from-bottom-4 duration-500">
-            <MultisigSetupForm />
+        {/* Hero Section */}
+        <section className="w-full flex flex-col items-center text-center space-y-6">
+          <h1 className="text-5xl md:text-6xl font-black tracking-tight text-[#e7e4ea] max-w-3xl leading-tight">
+            Compra y Vende con <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#ffb874] to-[#e78603]">Seguridad Multifirma</span>
+          </h1>
+          <p className="text-xl text-[#acaab0] max-w-2xl">
+            The institutional-grade Bitcoin escrow marketplace. Trade high-value physical and digital goods with trustless, on-chain execution.
+          </p>
+          <div className="flex gap-8 mt-8 p-6 bg-[#131316] rounded-xl border border-[#48474c]/15">
+            <div className="flex flex-col items-center">
+              <span className="text-[10px] uppercase tracking-[0.05em] text-[#acaab0] mb-1 font-bold">Contratos Activos</span>
+              <span className="text-2xl font-bold text-[#fe9821]">1,240</span>
+            </div>
+            <div className="w-px bg-[#48474c]/15"></div>
+            <div className="flex flex-col items-center">
+              <span className="text-[10px] uppercase tracking-[0.05em] text-[#acaab0] mb-1 font-bold">Volumen BTC</span>
+              <span className="text-2xl font-bold text-[#fe9821]">450.5 BTC</span>
+            </div>
           </div>
-        )}
+        </section>
 
-        {/* Step 2: Escrow Management */}
-        {step === "escrow" && (
-          <div className="w-full flex flex-col items-center gap-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-            <EscrowStatusCard
-              orderId={contractParams.id ? contractParams.id.substring(0, 8) : "####"}
-              btcAmount={(escrowState.amountExpected / 100_000_000).toFixed(8)}
-              usdValue={(escrowState.amountExpected * 0.0006).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} // Simple mock conversion
-              signaturesRequired={escrowState.signaturesRequired}
-              signaturesAcquired={escrowState.signaturesAcquired}
-              onSignAction={() => setIsModalOpen(true)}
-            />
-            
-            {/* Additional Info for Dev/Debug */}
-            <div className="w-full max-w-md p-4 bg-secondary/20 rounded-lg border border-border/50">
-              <h3 className="text-[10px] font-bold uppercase text-muted-foreground mb-3 tracking-widest">
-                Detalles del Contrato (On-Chain)
-              </h3>
-              <div className="space-y-3 font-mono text-[10px]">
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Dirección:</span>
-                  <span className="text-foreground break-all ml-4 text-right">
-                    {contractParams.multisigAddress || "N/A"}
-                  </span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Estatus Red:</span>
-                  <span className={cn(
-                    "font-bold num-tabular",
-                    escrowState.isFunded ? "text-primary" : "text-orange-500"
-                  )}>
-                    {escrowState.isFunded ? "Fondeado (Confirmado)" : "Esperando Depósito…"}
-                  </span>
+        {/* Product Grid */}
+        <section className="w-full space-y-8">
+          <div className="flex justify-between items-end border-b border-[#48474c]/15 pb-4">
+            <h2 className="text-2xl font-bold text-[#e7e4ea]">Trending Listings</h2>
+            <button className="text-sm font-medium text-[#ffb874] hover:text-[#e78603] transition-colors flex items-center gap-1">
+              View All <span className="material-symbols-outlined text-sm">arrow_forward</span>
+            </button>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {/* Card 1 */}
+            <article className="bg-[#131316] rounded-xl overflow-hidden border border-[#48474c]/15 group hover:border-[#48474c]/30 transition-all">
+              <div className="h-48 bg-[#25252a] relative overflow-hidden">
+                <div className="absolute inset-0 bg-[#25252a] bg-gradient-to-br from-zinc-800 to-black opacity-80"></div>
+                <div className="absolute top-3 right-3 bg-[#0e0e10]/80 backdrop-blur-md px-2 py-1 rounded border border-[#48474c]/30 flex items-center gap-1">
+                  <span className="material-symbols-outlined text-[#ffb874] text-[16px]">verified</span>
+                  <span className="text-[10px] font-semibold text-[#e7e4ea] uppercase">ESCROW</span>
                 </div>
               </div>
-            </div>
-          </div>
-        )}
+              <div className="p-6 space-y-4">
+                <div>
+                  <h3 className="text-lg font-bold text-[#e7e4ea] truncate">Trezor Safe 3</h3>
+                  <p className="text-sm text-[#acaab0] mt-1 flex items-center gap-1">
+                    <span className="material-symbols-outlined text-[16px]">person</span> @Satoshi_Nakamoto
+                  </p>
+                </div>
+                <div className="flex justify-between items-center pt-2">
+                  <div className="flex flex-col">
+                    <span className="text-[10px] text-[#acaab0] uppercase font-bold">Price</span>
+                    <span className="text-lg font-bold text-[#fe9821]">0.045 BTC</span>
+                  </div>
+                  <Link 
+                    href="/product/1" 
+                    className="bg-[#ffb874] text-[#613500] font-medium py-2 px-4 rounded hover:bg-[#e78603] transition-colors text-sm shadow-[0_2px_8px_rgba(255,184,116,0.15)]"
+                  >
+                    Comprar con Escrow
+                  </Link>
+                </div>
+              </div>
+            </article>
 
-        {/* Step 3: Dispute / Arbitrator */}
-        {step === "dispute" && (
-          <div className="w-full flex justify-center animate-in fade-in slide-in-from-bottom-4 duration-500">
-            <ArbitratorDesk
-              caseId={contractParams.id ? contractParams.id.substring(0, 4) : "000"}
-              escrowBalance={(escrowState.balance.totalSats / 100_000_000).toFixed(4)}
-              events={mockEvents}
-              onReleaseToBuyer={() => alert("Liberación solicitada al Árbitro")}
-              onRefundToSeller={() => alert("Reembolso solicitado al Árbitro")}
-            />
+            {/* Card 2 */}
+            <article className="bg-[#131316] rounded-xl overflow-hidden border border-[#48474c]/15 group hover:border-[#48474c]/30 transition-all">
+              <div className="h-48 bg-[#25252a] relative overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-tr from-zinc-900 to-[#131316] opacity-80"></div>
+                <div className="absolute top-3 right-3 bg-[#0e0e10]/80 backdrop-blur-md px-2 py-1 rounded border border-[#48474c]/30 flex items-center gap-1">
+                  <span className="material-symbols-outlined text-[#ffb874] text-[16px]">verified</span>
+                  <span className="text-[10px] font-semibold text-[#e7e4ea] uppercase">ESCROW</span>
+                </div>
+              </div>
+              <div className="p-6 space-y-4">
+                <div>
+                  <h3 className="text-lg font-bold text-[#e7e4ea] truncate">BitBox02 Bitcoin-only</h3>
+                  <p className="text-sm text-[#acaab0] mt-1 flex items-center gap-1">
+                    <span className="material-symbols-outlined text-[16px]">person</span> @HalFinney
+                  </p>
+                </div>
+                <div className="flex justify-between items-center pt-2">
+                  <div className="flex flex-col">
+                    <span className="text-[10px] text-[#acaab0] uppercase font-bold">Price</span>
+                    <span className="text-lg font-bold text-[#fe9821]">0.021 BTC</span>
+                  </div>
+                  <Link 
+                    href="/product/2"
+                    className="bg-[#ffb874] text-[#613500] font-medium py-2 px-4 rounded hover:bg-[#e78603] transition-colors text-sm shadow-[0_2px_8px_rgba(255,184,116,0.15)]"
+                  >
+                    Comprar con Escrow
+                  </Link>
+                </div>
+              </div>
+            </article>
+
+            {/* Card 3 */}
+            <article className="bg-[#131316] rounded-xl overflow-hidden border border-[#48474c]/15 group hover:border-[#48474c]/30 transition-all">
+              <div className="h-48 bg-[#25252a] relative overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-b from-zinc-800 to-black opacity-80"></div>
+                <div className="absolute top-3 right-3 bg-[#0e0e10]/80 backdrop-blur-md px-2 py-1 rounded border border-[#48474c]/30 flex items-center gap-1">
+                  <span className="material-symbols-outlined text-[#ffb874] text-[16px]">verified</span>
+                  <span className="text-[10px] font-semibold text-[#e7e4ea] uppercase">ESCROW</span>
+                </div>
+              </div>
+              <div className="p-6 space-y-4">
+                <div>
+                  <h3 className="text-lg font-bold text-[#e7e4ea] truncate">Titanium Seed Plate</h3>
+                  <p className="text-sm text-[#acaab0] mt-1 flex items-center gap-1">
+                    <span className="material-symbols-outlined text-[16px]">person</span> @CypherPunk99
+                  </p>
+                </div>
+                <div className="flex justify-between items-center pt-2">
+                  <div className="flex flex-col">
+                    <span className="text-[10px] text-[#acaab0] uppercase font-bold">Price</span>
+                    <span className="text-lg font-bold text-[#fe9821]">0.015 BTC</span>
+                  </div>
+                  <Link 
+                    href="/product/3"
+                    className="bg-[#ffb874] text-[#613500] font-medium py-2 px-4 rounded hover:bg-[#e78603] transition-colors text-sm shadow-[0_2px_8px_rgba(255,184,116,0.15)]"
+                  >
+                    Comprar con Escrow
+                  </Link>
+                </div>
+              </div>
+            </article>
           </div>
-        )}
+        </section>
       </main>
 
-      {/* Global Modals */}
-      <PSBTSignModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        onSign={handleSignTransaction}
-        isSigning={isLoading}
-        minerFee="0.00003200 BTC"
-        totalOutput={(escrowState.amountExpected / 100_000_000).toFixed(8)}
-        destinationAddress={contractParams.sellerPubkey ? "bc1q...Destination" : "Waiting for Setup..."}
-      />
-
-      {/* Footer Info */}
-      <footer className="w-full py-8 text-center border-t border-white/5 mt-12 bg-white/[0.02] backdrop-blur-sm">
-        <p className="text-[10px] text-muted-foreground/60 uppercase tracking-[0.3em] font-bold">
-          Satsy Escrow Protocol • Secure & Open Source
-        </p>
-      </footer>
+      <MarketplaceFooter />
     </div>
   );
 }

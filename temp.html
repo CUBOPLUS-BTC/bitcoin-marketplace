@@ -1,0 +1,842 @@
+<!-- User Dashboard - Escrow Management -->
+<!DOCTYPE html>
+
+<html class="dark" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Sovereign Ledger - Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "tertiary-container": "#f1eeaa",
+                        "primary-fixed-dim": "#ed8b0e",
+                        "surface-container-low": "#131316",
+                        "on-primary-container": "#341a00",
+                        "on-primary": "#613500",
+                        "surface-bright": "#2c2c30",
+                        "secondary-dim": "#bab8bc",
+                        "on-secondary-fixed": "#3f3f42",
+                        "tertiary-fixed": "#f7f4af",
+                        "on-tertiary-fixed-variant": "#686730",
+                        "inverse-primary": "#8d5000",
+                        "surface-container-high": "#1f1f23",
+                        "primary-fixed": "#fe9821",
+                        "on-primary-fixed": "#281300",
+                        "inverse-on-surface": "#565457",
+                        "tertiary-dim": "#e8e6a2",
+                        "error-dim": "#c44f34",
+                        "on-tertiary-fixed": "#4b4a16",
+                        "tertiary-fixed-dim": "#e8e6a2",
+                        "on-secondary": "#404043",
+                        "surface-variant": "#25252a",
+                        "outline": "#76757a",
+                        "primary": "#ffb874",
+                        "on-tertiary-container": "#5a5924",
+                        "secondary-fixed": "#e4e1e5",
+                        "background": "#0e0e10",
+                        "surface-container-highest": "#25252a",
+                        "on-background": "#e7e4ea",
+                        "primary-container": "#e78603",
+                        "surface": "#0e0e10",
+                        "tertiary": "#fffcc1",
+                        "surface-container": "#19191c",
+                        "outline-variant": "#48474c",
+                        "on-secondary-fixed-variant": "#5c5b5e",
+                        "on-secondary-container": "#c1bec2",
+                        "on-error-container": "#ff9b82",
+                        "surface-container-lowest": "#000000",
+                        "on-surface-variant": "#acaab0",
+                        "surface-tint": "#ffb874",
+                        "secondary-fixed-dim": "#d6d3d7",
+                        "primary-dim": "#fe9821",
+                        "on-error": "#450900",
+                        "error": "#f97758",
+                        "on-primary-fixed-variant": "#582f00",
+                        "secondary-container": "#3b3b3e",
+                        "error-container": "#85230a",
+                        "on-surface": "#e7e4ea",
+                        "inverse-surface": "#fcf8fb",
+                        "surface-dim": "#0e0e10",
+                        "secondary": "#c8c6c9",
+                        "on-tertiary": "#62612b"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {},
+                    "fontFamily": {
+                        "headline": ["Inter"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+</head>
+<body class="bg-background text-on-background antialiased flex overflow-hidden min-h-screen">
+<!-- SideNavBar -->
+<aside class="bg-zinc-950 font-['Inter'] tracking-tight antialiased h-screen w-64 border-r border-zinc-800/50 flex flex-col fixed left-0 top-0 p-6 z-40 hidden md:flex">
+<div class="mb-12">
+<h1 class="text-xl font-bold tracking-tighter text-[#ffb874] uppercase">Sovereign Ledger</h1>
+<p class="text-[0.6875rem] uppercase tracking-wider text-on-surface-variant mt-1">Verified Account</p>
+</div>
+<nav class="flex-1 flex flex-col gap-2">
+<a class="flex items-center gap-4 px-4 py-3 text-[#ffb874] font-semibold border-r-2 border-[#ffb874] bg-zinc-900/40 rounded-l transition-all duration-200 scale-95 active:scale-90" href="#">
+<span class="material-symbols-outlined text-[1.25rem]">shopping_cart</span>
+<span class="text-sm">Mis Compras</span>
+</a>
+<a class="flex items-center gap-4 px-4 py-3 text-zinc-500 hover:text-zinc-300 hover:bg-zinc-900/80 rounded transition-all duration-200" href="#">
+<span class="material-symbols-outlined text-[1.25rem]">sell</span>
+<span class="text-sm">Mis Ventas</span>
+</a>
+<a class="flex items-center gap-4 px-4 py-3 text-zinc-500 hover:text-zinc-300 hover:bg-zinc-900/80 rounded transition-all duration-200" href="#">
+<span class="material-symbols-outlined text-[1.25rem]">gavel</span>
+<span class="text-sm">Disputas</span>
+</a>
+<a class="flex items-center gap-4 px-4 py-3 text-zinc-500 hover:text-zinc-300 hover:bg-zinc-900/80 rounded transition-all duration-200 mt-auto" href="#">
+<span class="material-symbols-outlined text-[1.25rem]">settings</span>
+<span class="text-sm">Configuración</span>
+</a>
+</nav>
+<button class="mt-6 w-full py-3 bg-primary text-on-primary font-semibold text-sm rounded DEFAULT transition-colors hover:bg-primary-container">
+            Connect Wallet
+        </button>
+</aside>
+<!-- Main Content Wrapper -->
+<div class="flex-1 flex flex-col md:ml-64 relative min-h-screen">
+<!-- TopAppBar -->
+<header class="bg-zinc-950/80 backdrop-blur-xl font-['Inter'] uppercase tracking-widest text-[10px] w-full h-16 border-b border-zinc-800/30 sticky top-0 z-50 flex items-center justify-between px-8" style="box-shadow: 0 20px 40px rgba(0,0,0,0.4);">
+<div class="flex items-center gap-4">
+<span class="text-[#ffb874] font-bold text-sm tracking-wider">Escrow Terminal</span>
+</div>
+<div class="flex items-center gap-6">
+<div class="relative hidden sm:block">
+<span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 text-[1.25rem]">search</span>
+<input class="bg-surface-container-highest border-none rounded-none w-48 py-2 pl-3 pr-10 text-on-surface placeholder:text-zinc-500 focus:ring-1 focus:ring-[#ffb874] text-[10px] uppercase tracking-wider" placeholder="SEARCH TXID..." type="text"/>
+</div>
+<div class="flex items-center gap-4">
+<button class="text-zinc-400 hover:text-white transition-colors focus:ring-1 focus:ring-[#ffb874] outline-none">
+<span class="material-symbols-outlined text-[1.25rem]">notifications</span>
+</button>
+<button class="text-zinc-400 hover:text-white transition-colors focus:ring-1 focus:ring-[#ffb874] outline-none">
+<span class="material-symbols-outlined text-[1.25rem]">account_balance_wallet</span>
+</button>
+<div class="w-8 h-8 rounded-full bg-surface-container-highest overflow-hidden border border-outline-variant/30">
+<img alt="User avatar" class="w-full h-full object-cover" data-alt="close up abstract metallic dark grey texture with warm orange ambient lighting reflection" src="https://lh3.googleusercontent.com/aida-public/AB6AXuANko8JJ39nDHFuGzoYlIo_CbnBruT8D-CaVO5MxsEcNJc_DKA20FaFVwkoYj_qWDG3poqkIrbfLA2PPa49sztzvsuXW7qiL9W4s5R5uLaHBCVTSZTlcjawVw4mqdc7Z3D9Dk65k6lPaxlvBwU85r0XG2Mdu72WWBwso3DrIAW_8Z6sSgchtSF0j4V_6i7VgMqcPUI6DxN72Bp7Klr3JXDfjGcPT0DtLtkhv2ZxV1dZEajkLMB9_pGqvVJz_n1aFJ04Qlzzxc4rwAQ"/>
+</div>
+</div>
+</div>
+</header>
+<!-- Main Canvas -->
+<main class="flex-1 p-8 lg:p-12 overflow-y-auto">
+<!-- Page Header -->
+<div class="mb-12">
+<h2 class="text-[2rem] font-bold tracking-tight text-on-surface mb-2" style="letter-spacing: -0.02em;">Contratos Activos</h2>
+<p class="text-sm text-on-surface-variant font-medium">Gestión de operaciones en curso</p>
+</div>
+<!-- Escrow List Container -->
+<div class="flex flex-col gap-8 w-full max-w-5xl">
+<!-- Order Row 1 -->
+<div class="bg-surface-container-low p-6 rounded-lg relative overflow-hidden group">
+<div class="absolute inset-0 bg-surface-container-high opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
+<div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 relative z-10">
+<!-- Identity -->
+<div class="flex items-center gap-6">
+<div class="w-12 h-12 bg-surface-container-highest flex items-center justify-center rounded">
+<span class="material-symbols-outlined text-primary text-xl">vpn_key</span>
+</div>
+<div>
+<div class="flex items-baseline gap-3 mb-1">
+<span class="text-lg font-semibold text-on-surface">Trezor Safe 3</span>
+<span class="text-xs uppercase tracking-wider text-on-surface-variant">#ORD-8923</span>
+</div>
+<div class="flex items-center gap-2 text-sm text-on-surface-variant">
+<span class="material-symbols-outlined text-[1rem]">person</span>
+<span>Rol: Comprador</span>
+</div>
+</div>
+</div>
+<!-- Value & Status -->
+<div class="flex items-center gap-8 md:gap-12 w-full md:w-auto justify-between md:justify-end">
+<div class="text-right">
+<span class="block text-xs uppercase tracking-wider text-on-surface-variant mb-1">Valor Asegurado</span>
+<span class="text-xl font-bold text-primary-fixed">0.045 BTC</span>
+</div>
+<div class="flex flex-col items-end gap-3 min-w-[140px]">
+<span class="inline-flex items-center px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider bg-surface-container-highest text-primary border border-primary/20 rounded">
+                                    Esperando Fondeo
+                                </span>
+<button class="text-xs font-semibold uppercase tracking-wider text-primary hover:text-primary-container transition-colors flex items-center gap-1">
+                                    Ver Contrato <span class="material-symbols-outlined text-[1rem]">arrow_forward</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Order Row 2 -->
+<div class="bg-surface-container-low p-6 rounded-lg relative overflow-hidden group">
+<div class="absolute inset-0 bg-surface-container-high opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
+<div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 relative z-10">
+<!-- Identity -->
+<div class="flex items-center gap-6">
+<div class="w-12 h-12 bg-surface-container-highest flex items-center justify-center rounded">
+<span class="material-symbols-outlined text-primary text-xl">memory</span>
+</div>
+<div>
+<div class="flex items-baseline gap-3 mb-1">
+<span class="text-lg font-semibold text-on-surface">BitBox02</span>
+<span class="text-xs uppercase tracking-wider text-on-surface-variant">#ORD-7741</span>
+</div>
+<div class="flex items-center gap-2 text-sm text-on-surface-variant">
+<span class="material-symbols-outlined text-[1rem]">storefront</span>
+<span>Rol: Vendedor</span>
+</div>
+</div>
+</div>
+<!-- Value & Status -->
+<div class="flex items-center gap-8 md:gap-12 w-full md:w-auto justify-between md:justify-end">
+<div class="text-right">
+<span class="block text-xs uppercase tracking-wider text-on-surface-variant mb-1">Valor Asegurado</span>
+<span class="text-xl font-bold text-primary-fixed">0.021 BTC</span>
+</div>
+<div class="flex flex-col items-end gap-3 min-w-[140px]">
+<span class="inline-flex items-center px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider bg-tertiary-container text-on-tertiary-container rounded">
+<span class="w-1.5 h-1.5 rounded-full bg-on-tertiary-container mr-1.5 animate-pulse"></span>
+                                    Activo
+                                </span>
+<button class="text-xs font-semibold uppercase tracking-wider text-primary hover:text-primary-container transition-colors flex items-center gap-1">
+                                    Ver Contrato <span class="material-symbols-outlined text-[1rem]">arrow_forward</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Order Row 3 -->
+<div class="bg-surface-container-low p-6 rounded-lg relative overflow-hidden group opacity-75 hover:opacity-100 transition-opacity">
+<div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 relative z-10">
+<!-- Identity -->
+<div class="flex items-center gap-6">
+<div class="w-12 h-12 bg-surface-container-highest flex items-center justify-center rounded">
+<span class="material-symbols-outlined text-zinc-500 text-xl">sd_card</span>
+</div>
+<div>
+<div class="flex items-baseline gap-3 mb-1">
+<span class="text-lg font-semibold text-on-surface">Titanium Seed</span>
+<span class="text-xs uppercase tracking-wider text-on-surface-variant">#ORD-6512</span>
+</div>
+<div class="flex items-center gap-2 text-sm text-on-surface-variant">
+<span class="material-symbols-outlined text-[1rem]">person</span>
+<span>Rol: Comprador</span>
+</div>
+</div>
+</div>
+<!-- Value & Status -->
+<div class="flex items-center gap-8 md:gap-12 w-full md:w-auto justify-between md:justify-end">
+<div class="text-right">
+<span class="block text-xs uppercase tracking-wider text-on-surface-variant mb-1">Valor Asegurado</span>
+<span class="text-xl font-bold text-zinc-500">0.015 BTC</span>
+</div>
+<div class="flex flex-col items-end gap-3 min-w-[140px]">
+<span class="inline-flex items-center px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider bg-secondary-container text-on-secondary rounded">
+                                    Completado
+                                </span>
+<button class="text-xs font-semibold uppercase tracking-wider text-zinc-400 hover:text-white transition-colors flex items-center gap-1">
+                                    Ver Historial <span class="material-symbols-outlined text-[1rem]">history</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Detailed View Simulation Slide-over Panel -->
+<!-- Partially visible state simulation -->
+<div class="fixed top-16 right-0 h-[calc(100vh-4rem)] w-96 bg-surface-container-high border-l border-zinc-800/50 shadow-2xl transform translate-x-1/4 hover:translate-x-0 transition-transform duration-500 ease-in-out z-40 hidden xl:block">
+<div class="p-6 h-full flex flex-col">
+<div class="flex justify-between items-center mb-8">
+<h3 class="text-lg font-bold text-on-surface">Contract Details</h3>
+<button class="text-zinc-500 hover:text-white">
+<span class="material-symbols-outlined">close</span>
+</button>
+</div>
+<div class="flex-1 border-2 border-dashed border-outline-variant/30 rounded flex items-center justify-center p-8 bg-surface-container-lowest/50">
+<p class="text-sm text-on-surface-variant font-mono text-center uppercase tracking-wider">
+                        Inyectar<br/><span class="text-primary mt-2 block">ContractStatus.tsx</span><br/>aquí
+                    </p>
+</div>
+</div>
+</div>
+</div>
+</body></html>
+
+<!-- Product Detail & Checkout -->
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Sovereign Ledger - Product Checkout</title>
+<!-- Fonts & Icons -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Design System Configuration -->
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "secondary-fixed-dim": "#d6d3d7",
+                    "on-primary-fixed": "#281300",
+                    "primary-container": "#e78603",
+                    "primary-dim": "#fe9821",
+                    "on-tertiary-fixed": "#4b4a16",
+                    "tertiary-fixed": "#f7f4af",
+                    "secondary-fixed": "#e4e1e5",
+                    "on-secondary-fixed-variant": "#5c5b5e",
+                    "inverse-surface": "#fcf8fb",
+                    "surface-container-highest": "#25252a",
+                    "error-container": "#85230a",
+                    "on-surface-variant": "#acaab0",
+                    "on-error-container": "#ff9b82",
+                    "primary": "#ffb874",
+                    "tertiary-dim": "#e8e6a2",
+                    "background": "#0e0e10",
+                    "on-secondary-fixed": "#3f3f42",
+                    "on-surface": "#e7e4ea",
+                    "secondary-dim": "#bab8bc",
+                    "on-secondary": "#404043",
+                    "outline": "#76757a",
+                    "tertiary-fixed-dim": "#e8e6a2",
+                    "on-secondary-container": "#c1bec2",
+                    "secondary-container": "#3b3b3e",
+                    "surface-tint": "#ffb874",
+                    "outline-variant": "#48474c",
+                    "on-error": "#450900",
+                    "inverse-on-surface": "#565457",
+                    "surface-container-low": "#131316",
+                    "on-primary-container": "#341a00",
+                    "primary-fixed-dim": "#ed8b0e",
+                    "primary-fixed": "#fe9821",
+                    "on-tertiary-fixed-variant": "#686730",
+                    "tertiary-container": "#f1eeaa",
+                    "surface-container-lowest": "#000000",
+                    "on-background": "#e7e4ea",
+                    "surface-dim": "#0e0e10",
+                    "surface-bright": "#2c2c30",
+                    "surface": "#0e0e10",
+                    "surface-container": "#19191c",
+                    "surface-variant": "#25252a",
+                    "tertiary": "#fffcc1",
+                    "on-primary": "#613500",
+                    "error": "#f97758",
+                    "inverse-primary": "#8d5000",
+                    "surface-container-high": "#1f1f23",
+                    "error-dim": "#c44f34",
+                    "on-tertiary-container": "#5a5924",
+                    "secondary": "#c8c6c9",
+                    "on-primary-fixed-variant": "#582f00",
+                    "on-tertiary": "#62612b"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "fontFamily": {
+                    "headline": ["Inter"],
+                    "body": ["Inter"],
+                    "label": ["Inter"]
+            }
+          }
+        }
+      }
+    </script>
+</head>
+<body class="bg-background text-on-surface font-body antialiased min-h-screen flex flex-col pt-20">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-zinc-950/60 backdrop-blur-xl shadow-2xl shadow-black/40 bg-zinc-900/50">
+<div class="flex justify-between items-center h-20 px-8 max-w-[1920px] mx-auto font-['Inter'] tracking-tight">
+<!-- Brand -->
+<div class="text-2xl font-black tracking-tighter text-[#ffb874]">
+                Sovereign Ledger
+            </div>
+<!-- Navigation Links -->
+<nav class="hidden md:flex items-center gap-8 text-sm font-medium">
+<a class="text-[#ffb874] border-b-2 border-[#ffb874] pb-1 hover:bg-zinc-800/50 transition-all Active: scale-[0.99] duration-200" href="#">Market</a>
+<a class="text-zinc-400 hover:text-zinc-100 transition-colors hover:bg-zinc-800/50 transition-all Active: scale-[0.99] duration-200 pb-1 border-b-2 border-transparent" href="#">Escrows</a>
+<a class="text-zinc-400 hover:text-zinc-100 transition-colors hover:bg-zinc-800/50 transition-all Active: scale-[0.99] duration-200 pb-1 border-b-2 border-transparent" href="#">Wallet</a>
+<a class="text-zinc-400 hover:text-zinc-100 transition-colors hover:bg-zinc-800/50 transition-all Active: scale-[0.99] duration-200 pb-1 border-b-2 border-transparent" href="#">Governance</a>
+</nav>
+<!-- Trailing Actions -->
+<div class="flex items-center gap-6">
+<div class="flex gap-4">
+<button class="text-zinc-400 hover:text-zinc-100 transition-colors hover:bg-zinc-800/50 transition-all rounded p-2">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">notifications</span>
+</button>
+<button class="text-zinc-400 hover:text-zinc-100 transition-colors hover:bg-zinc-800/50 transition-all rounded p-2">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">account_balance_wallet</span>
+</button>
+</div>
+<button class="bg-primary text-on-primary font-semibold px-5 py-2.5 rounded hover:bg-surface-bright transition-all text-sm tracking-wide">
+                    Connect Wallet
+                </button>
+</div>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="flex-grow w-full max-w-7xl mx-auto px-8 py-16">
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-16 items-start">
+<!-- Left Column: Product Info (2/3) -->
+<section class="lg:col-span-8 flex flex-col gap-10">
+<!-- Product Image -->
+<div class="w-full aspect-[16/9] bg-surface-container-low rounded-lg flex items-center justify-center overflow-hidden border border-outline-variant/15 relative">
+<!-- Placeholder gradient for dark zinc/black aesthetic -->
+<div class="absolute inset-0 bg-gradient-to-br from-surface-container-high to-surface-container-lowest opacity-80" data-alt="sleek matte black hardware wallet sitting on dark textured slate surface with dramatic spotlight lighting"></div>
+<span class="material-symbols-outlined text-outline text-6xl relative z-10" style="font-variation-settings: 'FILL' 0;">memory</span>
+</div>
+<!-- Product Details -->
+<div class="flex flex-col gap-6">
+<h1 class="text-4xl md:text-[2.75rem] font-headline font-black tracking-tight text-on-surface leading-tight">
+                        Trezor Safe 3 - Bitcoin Only Edition
+                    </h1>
+<!-- Seller & Reputation -->
+<div class="flex flex-wrap items-center gap-6 pb-8">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-surface-container-highest border border-outline-variant/15 flex items-center justify-center overflow-hidden">
+<span class="material-symbols-outlined text-on-surface-variant text-xl">person</span>
+</div>
+<div class="flex items-center gap-1.5">
+<span class="font-semibold text-lg text-on-surface tracking-wide">@Satoshi_Nakamoto</span>
+<span class="material-symbols-outlined text-primary text-lg" style="font-variation-settings: 'FILL' 1;">verified</span>
+</div>
+</div>
+<div class="h-6 w-[1px] bg-outline-variant/30 hidden sm:block"></div>
+<div class="flex items-center gap-3">
+<div class="flex items-center text-primary">
+<span class="material-symbols-outlined text-xl" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-xl" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-xl" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-xl" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-xl" style="font-variation-settings: 'FILL' 1;">star</span>
+</div>
+<span class="text-on-surface-variant font-medium text-sm tracking-wide">482 Escrow Sales</span>
+</div>
+</div>
+<!-- Description -->
+<div class="bg-surface-container-low p-8 rounded-lg border border-outline-variant/15">
+<h3 class="text-xl font-headline font-bold mb-4 text-on-surface">Product Overview</h3>
+<p class="text-on-surface-variant text-lg leading-relaxed font-body">
+                            High-fidelity hardware wallet with specialized security for the Bitcoin network. Shipped with tamper-evident seal. Engineered for absolute sovereignty, this device ensures your private keys never touch an internet-connected environment. Designed exclusively for the rigorous demands of the Bitcoin protocol.
+                        </p>
+</div>
+</div>
+</section>
+<!-- Right Column: Checkout Box (1/3) -->
+<section class="lg:col-span-4 sticky top-32">
+<div class="bg-surface-container-highest rounded-lg p-8 border border-outline-variant/15 flex flex-col gap-8 shadow-[0_20px_40px_rgba(0,0,0,0.4)]">
+<!-- Price -->
+<div class="flex flex-col gap-2">
+<span class="text-label uppercase tracking-widest text-on-surface-variant text-[0.6875rem] font-bold">Total Price</span>
+<div class="text-primary-fixed text-[2.75rem] font-headline font-black tracking-tighter leading-none">
+                            0.04500000 <span class="text-2xl text-primary-fixed/70 align-top">BTC</span>
+</div>
+</div>
+<!-- Fees -->
+<div class="flex flex-col gap-4 py-6">
+<div class="flex justify-between items-center text-sm font-body">
+<span class="text-on-surface-variant">Miner Fee (Est)</span>
+<span class="text-on-surface font-semibold">12 sats/vB</span>
+</div>
+<div class="flex justify-between items-center text-sm font-body">
+<span class="text-on-surface-variant">Marketplace Fee</span>
+<span class="text-on-surface font-semibold">1%</span>
+</div>
+</div>
+<!-- Warning Badge -->
+<div class="bg-tertiary-container/10 border border-primary/20 rounded p-4 flex gap-4 items-start">
+<span class="material-symbols-outlined text-primary mt-0.5" style="font-variation-settings: 'FILL' 1;">shield_lock</span>
+<p class="text-sm text-primary-dim leading-snug font-medium">
+                            Tus fondos estarán bloqueados en un contrato 2-de-3 hasta que confirmes la entrega.
+                        </p>
+</div>
+<!-- Injection Area -->
+<div class="border-2 border-dashed border-outline-variant/30 rounded-lg p-10 flex flex-col items-center justify-center gap-3 bg-surface-container/50">
+<span class="material-symbols-outlined text-outline-variant text-3xl">code_blocks</span>
+<p class="text-on-surface-variant text-sm font-medium tracking-wide text-center">Inyectar MultisigSetupForm.tsx aquí</p>
+</div>
+<!-- Mock CTA for visual completeness -->
+<button class="w-full bg-primary text-on-primary font-bold py-4 rounded hover:bg-surface-bright transition-all uppercase tracking-widest text-sm mt-2">
+                        Initialize Escrow
+                    </button>
+</div>
+</section>
+</div>
+</main>
+<!-- Footer -->
+<footer class="w-full py-16 px-8 bg-zinc-950 mt-20 tonal shift using bg-zinc-900 flat no shadows border-t border-zinc-800/20">
+<div class="flex flex-col md:flex-row justify-between items-center gap-8 max-w-7xl mx-auto">
+<!-- Brand & Copyright -->
+<div class="flex flex-col gap-2 items-center md:items-start">
+<div class="text-lg font-bold text-zinc-100 font-['Inter']">Sovereign Ledger</div>
+<div class="text-zinc-500 text-sm">© 2024 Sovereign Ledger. All rights reserved. Secure via Bitcoin Network.</div>
+</div>
+<!-- Footer Links -->
+<nav class="flex flex-wrap justify-center gap-6 font-['Inter'] text-sm tracking-wide uppercase">
+<a class="text-zinc-500 hover:text-zinc-100 transition-colors opacity-80 hover:opacity-100 transition-opacity" href="#">Protocol</a>
+<a class="text-zinc-500 hover:text-zinc-100 transition-colors opacity-80 hover:opacity-100 transition-opacity" href="#">Documentation</a>
+<a class="text-zinc-500 hover:text-zinc-100 transition-colors opacity-80 hover:opacity-100 transition-opacity" href="#">Node Status</a>
+<a class="text-zinc-500 hover:text-zinc-100 transition-colors opacity-80 hover:opacity-100 transition-opacity" href="#">Transparency</a>
+<a class="text-zinc-500 hover:text-zinc-100 transition-colors opacity-80 hover:opacity-100 transition-opacity" href="#">Privacy</a>
+</nav>
+</div>
+</footer>
+</body></html>
+
+<!-- Web3 Marketplace Home -->
+<!DOCTYPE html>
+
+<html class="dark" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Sovereign Ledger - Web3 Marketplace</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "secondary": "#c8c6c9",
+                        "surface-container-lowest": "#000000",
+                        "surface-container-low": "#131316",
+                        "on-secondary-fixed-variant": "#5c5b5e",
+                        "surface-dim": "#0e0e10",
+                        "secondary-dim": "#bab8bc",
+                        "outline-variant": "#48474c",
+                        "on-tertiary-fixed": "#4b4a16",
+                        "on-primary-container": "#341a00",
+                        "secondary-fixed-dim": "#d6d3d7",
+                        "error-container": "#85230a",
+                        "on-secondary-fixed": "#3f3f42",
+                        "on-tertiary": "#62612b",
+                        "surface-bright": "#2c2c30",
+                        "surface": "#0e0e10",
+                        "on-tertiary-fixed-variant": "#686730",
+                        "surface-tint": "#ffb874",
+                        "primary-container": "#e78603",
+                        "on-error": "#450900",
+                        "primary-fixed": "#fe9821",
+                        "on-primary-fixed": "#281300",
+                        "primary": "#ffb874",
+                        "background": "#0e0e10",
+                        "on-surface": "#e7e4ea",
+                        "on-primary-fixed-variant": "#582f00",
+                        "surface-variant": "#25252a",
+                        "on-error-container": "#ff9b82",
+                        "inverse-primary": "#8d5000",
+                        "tertiary-fixed": "#f7f4af",
+                        "surface-container": "#19191c",
+                        "inverse-on-surface": "#565457",
+                        "primary-dim": "#fe9821",
+                        "secondary-fixed": "#e4e1e5",
+                        "surface-container-highest": "#25252a",
+                        "outline": "#76757a",
+                        "on-secondary": "#404043",
+                        "on-secondary-container": "#c1bec2",
+                        "inverse-surface": "#fcf8fb",
+                        "tertiary-dim": "#e8e6a2",
+                        "error": "#f97758",
+                        "on-surface-variant": "#acaab0",
+                        "tertiary": "#fffcc1",
+                        "error-dim": "#c44f34",
+                        "surface-container-high": "#1f1f23",
+                        "on-background": "#e7e4ea",
+                        "tertiary-container": "#f1eeaa",
+                        "tertiary-fixed-dim": "#e8e6a2",
+                        "on-tertiary-container": "#5a5924",
+                        "on-primary": "#613500",
+                        "primary-fixed-dim": "#ed8b0e",
+                        "secondary-container": "#3b3b3e"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "fontFamily": {
+                        "headline": ["Inter"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; background-color: #0e0e10; color: #e7e4ea; }
+        .glass-panel { background: rgba(37, 37, 42, 0.6); backdrop-filter: blur(40px); -webkit-backdrop-filter: blur(40px); }
+        .text-gradient-metallic { background: linear-gradient(135deg, #ffb874 0%, #e78603 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .bg-gradient-metallic { background: linear-gradient(135deg, #ffb874 0%, #e78603 100%); }
+    </style>
+</head>
+<body class="antialiased min-h-screen flex flex-col">
+<!-- TopNavBar -->
+<nav aria-label="Main Navigation" class="bg-[#0e0e10]/60 backdrop-blur-[40px] font-['Inter'] text-sm tracking-tight docked full-width top-0 sticky z-50 shadow-[0_20px_40px_rgba(0,0,0,0.4)] transition-all duration-200">
+<div class="flex justify-between items-center w-full px-8 py-4 max-w-[1440px] mx-auto">
+<div class="flex items-center gap-8">
+<a class="text-xl font-black tracking-tighter text-[#e7e4ea] hover:bg-[#2c2c30] transition-all duration-200 Active: scale-95 duration-150 ease-in-out p-2 rounded-DEFAULT" href="#">
+                    Sovereign Ledger
+                </a>
+<div class="hidden md:flex items-center gap-6">
+<a class="text-[#ffb874] font-bold border-b-2 border-[#ffb874] pb-1 hover:bg-[#2c2c30] transition-all duration-200 p-2 rounded-t-DEFAULT" href="#">Explore</a>
+<a class="text-[#acaab0] hover:text-[#e7e4ea] transition-colors hover:bg-[#2c2c30] p-2 rounded-DEFAULT" href="#">My Escrows</a>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<div class="relative hidden sm:block">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-sm">search</span>
+<input class="bg-surface-container-highest border-b-2 border-transparent focus:border-primary text-on-surface text-sm rounded-DEFAULT py-2 pl-9 pr-4 w-64 focus:outline-none transition-colors" placeholder="Search marketplace..." type="text"/>
+</div>
+<button class="bg-primary text-on-primary font-medium py-2 px-4 rounded-DEFAULT hover:bg-primary-container transition-colors shadow-[0_4px_14px_rgba(255,184,116,0.2)]">
+                    Connect Wallet
+                </button>
+</div>
+</div>
+</nav>
+<!-- Main Content -->
+<main class="flex-grow flex flex-col items-center w-full max-w-[1440px] mx-auto px-8 py-12 gap-16">
+<!-- Hero Section -->
+<section class="w-full flex flex-col items-center text-center space-y-6">
+<h1 class="text-display-md font-black tracking-tight text-on-surface max-w-3xl leading-tight">
+                Compra y Vende con <span class="text-gradient-metallic">Seguridad Multifirma</span>
+</h1>
+<p class="text-body-lg text-on-surface-variant max-w-2xl">
+                The institutional-grade Bitcoin escrow marketplace. Trade high-value physical and digital goods with trustless, on-chain execution.
+            </p>
+<div class="flex gap-8 mt-8 p-6 bg-surface-container-low rounded-xl border border-outline-variant/15">
+<div class="flex flex-col items-center">
+<span class="text-label-sm uppercase tracking-[0.05em] text-on-surface-variant mb-1">Contratos Activos</span>
+<span class="text-headline-sm font-bold text-primary-fixed">1,240</span>
+</div>
+<div class="w-px bg-outline-variant/15"></div>
+<div class="flex flex-col items-center">
+<span class="text-label-sm uppercase tracking-[0.05em] text-on-surface-variant mb-1">Volumen BTC</span>
+<span class="text-headline-sm font-bold text-primary-fixed">450.5 BTC</span>
+</div>
+</div>
+</section>
+<!-- Product Grid -->
+<section class="w-full space-y-8">
+<div class="flex justify-between items-end border-b border-outline-variant/15 pb-4">
+<h2 class="text-headline-sm font-bold text-on-surface">Trending Listings</h2>
+<button class="text-sm font-medium text-primary hover:text-primary-container transition-colors flex items-center gap-1">
+                    View All <span class="material-symbols-outlined text-sm">arrow_forward</span>
+</button>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+<!-- Card 1 -->
+<article class="bg-surface-container-low rounded-xl overflow-hidden border border-outline-variant/15 group hover:border-outline-variant/30 transition-all">
+<div class="h-48 bg-surface-container-highest relative overflow-hidden">
+<div class="absolute inset-0 bg-surface-container-highest" data-alt="High quality product photograph of a modern hardware wallet device resting on a dark slate surface with dramatic, moody studio lighting highlighting its metallic edges"></div>
+<div class="absolute top-3 right-3 bg-surface-dim/80 backdrop-blur-md px-2 py-1 rounded-DEFAULT border border-outline-variant/30 flex items-center gap-1">
+<span class="material-symbols-outlined text-primary text-[16px]">verified</span>
+<span class="text-label-sm font-semibold text-on-surface">ESCROW</span>
+</div>
+</div>
+<div class="p-6 space-y-4">
+<div>
+<h3 class="text-lg font-bold text-on-surface truncate">Trezor Safe 3</h3>
+<p class="text-sm text-on-surface-variant mt-1 flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">person</span> @Satoshi_Nakamoto
+                            </p>
+</div>
+<div class="flex justify-between items-center pt-2">
+<div class="flex flex-col">
+<span class="text-label-sm text-on-surface-variant uppercase">Price</span>
+<span class="text-lg font-bold text-primary-fixed">0.045 BTC</span>
+</div>
+<button class="bg-primary text-on-primary font-medium py-2 px-4 rounded-DEFAULT hover:bg-primary-container transition-colors text-sm shadow-[0_2px_8px_rgba(255,184,116,0.15)]">
+                                Comprar con Escrow
+                            </button>
+</div>
+</div>
+</article>
+<!-- Card 2 -->
+<article class="bg-surface-container-low rounded-xl overflow-hidden border border-outline-variant/15 group hover:border-outline-variant/30 transition-all">
+<div class="h-48 bg-surface-container-highest relative overflow-hidden">
+<div class="absolute inset-0 bg-surface-container-highest" data-alt="Close up shot of a sleek black hardware crypto wallet on a matte dark background, lit softly from the side to show texture"></div>
+<div class="absolute top-3 right-3 bg-surface-dim/80 backdrop-blur-md px-2 py-1 rounded-DEFAULT border border-outline-variant/30 flex items-center gap-1">
+<span class="material-symbols-outlined text-primary text-[16px]">verified</span>
+<span class="text-label-sm font-semibold text-on-surface">ESCROW</span>
+</div>
+</div>
+<div class="p-6 space-y-4">
+<div>
+<h3 class="text-lg font-bold text-on-surface truncate">BitBox02 Bitcoin-only</h3>
+<p class="text-sm text-on-surface-variant mt-1 flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">person</span> @HalFinney
+                            </p>
+</div>
+<div class="flex justify-between items-center pt-2">
+<div class="flex flex-col">
+<span class="text-label-sm text-on-surface-variant uppercase">Price</span>
+<span class="text-lg font-bold text-primary-fixed">0.021 BTC</span>
+</div>
+<button class="bg-primary text-on-primary font-medium py-2 px-4 rounded-DEFAULT hover:bg-primary-container transition-colors text-sm shadow-[0_2px_8px_rgba(255,184,116,0.15)]">
+                                Comprar con Escrow
+                            </button>
+</div>
+</div>
+</article>
+<!-- Card 3 -->
+<article class="bg-surface-container-low rounded-xl overflow-hidden border border-outline-variant/15 group hover:border-outline-variant/30 transition-all">
+<div class="h-48 bg-surface-container-highest relative overflow-hidden">
+<div class="absolute inset-0 bg-surface-container-highest" data-alt="Premium titanium seed phrase backup plate with steel punch tool, arranged symmetrically on a dark velvet surface with spot lighting"></div>
+<div class="absolute top-3 right-3 bg-surface-dim/80 backdrop-blur-md px-2 py-1 rounded-DEFAULT border border-outline-variant/30 flex items-center gap-1">
+<span class="material-symbols-outlined text-primary text-[16px]">verified</span>
+<span class="text-label-sm font-semibold text-on-surface">ESCROW</span>
+</div>
+</div>
+<div class="p-6 space-y-4">
+<div>
+<h3 class="text-lg font-bold text-on-surface truncate">Titanium Seed Plate</h3>
+<p class="text-sm text-on-surface-variant mt-1 flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">person</span> @CypherPunk99
+                            </p>
+</div>
+<div class="flex justify-between items-center pt-2">
+<div class="flex flex-col">
+<span class="text-label-sm text-on-surface-variant uppercase">Price</span>
+<span class="text-lg font-bold text-primary-fixed">0.015 BTC</span>
+</div>
+<button class="bg-primary text-on-primary font-medium py-2 px-4 rounded-DEFAULT hover:bg-primary-container transition-colors text-sm shadow-[0_2px_8px_rgba(255,184,116,0.15)]">
+                                Comprar con Escrow
+                            </button>
+</div>
+</div>
+</article>
+<!-- Card 4 -->
+<article class="bg-surface-container-low rounded-xl overflow-hidden border border-outline-variant/15 group hover:border-outline-variant/30 transition-all">
+<div class="h-48 bg-surface-container-highest relative overflow-hidden">
+<div class="absolute inset-0 bg-surface-container-highest" data-alt="Abstract rendering of digital art piece featuring geometric bitcoin logo floating in dark void space with subtle orange glow"></div>
+<div class="absolute top-3 right-3 bg-surface-dim/80 backdrop-blur-md px-2 py-1 rounded-DEFAULT border border-outline-variant/30 flex items-center gap-1">
+<span class="material-symbols-outlined text-primary text-[16px]">verified</span>
+<span class="text-label-sm font-semibold text-on-surface">ESCROW</span>
+</div>
+</div>
+<div class="p-6 space-y-4">
+<div>
+<h3 class="text-lg font-bold text-on-surface truncate">Genesis Block Ordinal</h3>
+<p class="text-sm text-on-surface-variant mt-1 flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">person</span> @RareSat
+                            </p>
+</div>
+<div class="flex justify-between items-center pt-2">
+<div class="flex flex-col">
+<span class="text-label-sm text-on-surface-variant uppercase">Price</span>
+<span class="text-lg font-bold text-primary-fixed">0.150 BTC</span>
+</div>
+<button class="bg-primary text-on-primary font-medium py-2 px-4 rounded-DEFAULT hover:bg-primary-container transition-colors text-sm shadow-[0_2px_8px_rgba(255,184,116,0.15)]">
+                                Comprar con Escrow
+                            </button>
+</div>
+</div>
+</article>
+<!-- Card 5 -->
+<article class="bg-surface-container-low rounded-xl overflow-hidden border border-outline-variant/15 group hover:border-outline-variant/30 transition-all">
+<div class="h-48 bg-surface-container-highest relative overflow-hidden">
+<div class="absolute inset-0 bg-surface-container-highest" data-alt="Vintage bitcoin physical coin in protective acrylic case resting on polished mahogany table under warm desk lamp"></div>
+<div class="absolute top-3 right-3 bg-surface-dim/80 backdrop-blur-md px-2 py-1 rounded-DEFAULT border border-outline-variant/30 flex items-center gap-1">
+<span class="material-symbols-outlined text-primary text-[16px]">verified</span>
+<span class="text-label-sm font-semibold text-on-surface">ESCROW</span>
+</div>
+</div>
+<div class="p-6 space-y-4">
+<div>
+<h3 class="text-lg font-bold text-on-surface truncate">Physical Casascius Coin 2011</h3>
+<p class="text-sm text-on-surface-variant mt-1 flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">person</span> @HodlKing
+                            </p>
+</div>
+<div class="flex justify-between items-center pt-2">
+<div class="flex flex-col">
+<span class="text-label-sm text-on-surface-variant uppercase">Price</span>
+<span class="text-lg font-bold text-primary-fixed">1.250 BTC</span>
+</div>
+<button class="bg-primary text-on-primary font-medium py-2 px-4 rounded-DEFAULT hover:bg-primary-container transition-colors text-sm shadow-[0_2px_8px_rgba(255,184,116,0.15)]">
+                                Comprar con Escrow
+                            </button>
+</div>
+</div>
+</article>
+<!-- Card 6 -->
+<article class="bg-surface-container-low rounded-xl overflow-hidden border border-outline-variant/15 group hover:border-outline-variant/30 transition-all">
+<div class="h-48 bg-surface-container-highest relative overflow-hidden">
+<div class="absolute inset-0 bg-surface-container-highest" data-alt="Minimalist desktop rig setup with specialized hardware device connected via thick braided cable in dark moody room"></div>
+<div class="absolute top-3 right-3 bg-surface-dim/80 backdrop-blur-md px-2 py-1 rounded-DEFAULT border border-outline-variant/30 flex items-center gap-1">
+<span class="material-symbols-outlined text-primary text-[16px]">verified</span>
+<span class="text-label-sm font-semibold text-on-surface">ESCROW</span>
+</div>
+</div>
+<div class="p-6 space-y-4">
+<div>
+<h3 class="text-lg font-bold text-on-surface truncate">Custom Node Terminal</h3>
+<p class="text-sm text-on-surface-variant mt-1 flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">person</span> @BlockBuilder
+                            </p>
+</div>
+<div class="flex justify-between items-center pt-2">
+<div class="flex flex-col">
+<span class="text-label-sm text-on-surface-variant uppercase">Price</span>
+<span class="text-lg font-bold text-primary-fixed">0.085 BTC</span>
+</div>
+<button class="bg-primary text-on-primary font-medium py-2 px-4 rounded-DEFAULT hover:bg-primary-container transition-colors text-sm shadow-[0_2px_8px_rgba(255,184,116,0.15)]">
+                                Comprar con Escrow
+                            </button>
+</div>
+</div>
+</article>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="bg-[#0e0e10] font-['Inter'] text-xs uppercase tracking-[0.05em] full-width py-12 border-t border-[#48474c]/15 opacity-80 hover:opacity-100 transition-opacity">
+<div class="flex flex-col md:flex-row justify-between items-center px-8 w-full max-w-[1440px] mx-auto gap-6">
+<div class="flex items-center gap-4">
+<span class="text-lg font-bold text-[#e7e4ea]">Sovereign Ledger</span>
+<span class="text-[#acaab0]">© 2024 Sovereign Ledger. Built for the Infinite Void.</span>
+</div>
+<div class="flex flex-wrap justify-center gap-6">
+<a class="text-[#acaab0] hover:text-[#ffb874] transition-colors" href="#">Security</a>
+<a class="text-[#acaab0] hover:text-[#ffb874] transition-colors" href="#">Escrow Logic</a>
+<a class="text-[#acaab0] hover:text-[#ffb874] transition-colors" href="#">Nodes</a>
+<a class="text-[#acaab0] hover:text-[#ffb874] transition-colors" href="#">Privacy</a>
+</div>
+</div>
+</footer>
+</body></html>
