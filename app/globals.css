@@ -1,26 +1,197 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+@custom-variant dark (&:is(.dark *));
 
 @theme inline {
+  /* ── Tipografía ── */
+  --font-sans: 'Geist', 'Geist Fallback';
+  --font-mono: 'Geist Mono', 'Geist Mono Fallback';
+
+  /* ── Colores semánticos (todos referenciando CSS vars) ── */
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  /* ── Chart/Gráficos ── */
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+
+  /* ── Radii (base: 0.5rem) ── */
+  --radius-sm: calc(var(--radius) - 4px);   /* 0.25rem */
+  --radius-md: calc(var(--radius) - 2px);   /* 0.375rem */
+  --radius-lg: var(--radius);               /* 0.5rem */
+  --radius-xl: calc(var(--radius) + 4px);   /* 0.75rem */
+
+  /* ── Sidebar ── */
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
 }
 
-@media (prefers-color-scheme: dark) {
+@layer base {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
+    /* ── Fondos ── */
+    --background: #09090b;           /* Zinc-950 — fondo principal */
+    --foreground: #fafafa;           /* Zinc-50 — texto principal */
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+    /* ── Superficies (Card/Popover) ── */
+    --card: #111113;                 /* Un tono por encima del fondo */
+    --card-foreground: #fafafa;
+    --popover: #111113;
+    --popover-foreground: #fafafa;
+
+    /* ── Primary accent: Mint Green ── */
+    --primary: #36D69E;              /* ⭐ Color identitario del proyecto */
+    --primary-foreground: #09090b;   /* Texto oscuro sobre mint */
+
+    /* ── Secondary ── */
+    --secondary: #1a1a1e;            /* Superficie elevada sutil */
+    --secondary-foreground: #fafafa;
+
+    /* ── Muted (texto de soporte) ── */
+    --muted: #1a1a1e;
+    --muted-foreground: #a1a1aa;     /* Zinc-400 — texto desaturado */
+
+    /* ── Accent (= primary en dark) ── */
+    --accent: #36D69E;
+    --accent-foreground: #09090b;
+
+    /* ── Destructive (errores) ── */
+    --destructive: #ef4444;          /* Red-500 */
+    --destructive-foreground: #fafafa;
+
+    /* ── Bordes e inputs ── */
+    --border: #27272a;               /* Zinc-800 */
+    --input: #1a1a1e;
+    --ring: #36D69E;                 /* Focus ring = primary */
+
+    /* ── Gráficos ── */
+    --chart-1: #36D69E;              /* Mint (primary) */
+    --chart-2: #6B8AFF;              /* Azul lavanda */
+    --chart-3: #ef4444;              /* Rojo */
+    --chart-4: #F7931A;              /* Bitcoin Orange */
+    --chart-5: #627EEA;              /* Ethereum Blue */
+
+    /* ── Radio ── */
+    --radius: 0.5rem;
+
+    /* ── Sidebar ── */
+    --sidebar: #111113;
+    --sidebar-foreground: #fafafa;
+    --sidebar-primary: #36D69E;
+    --sidebar-primary-foreground: #09090b;
+    --sidebar-accent: #1a1a1e;
+    --sidebar-accent-foreground: #fafafa;
+    --sidebar-border: #27272a;
+    --sidebar-ring: #36D69E;
+  }
+
+  .light {
+    --background: #ffffff;
+    --foreground: #09090b;
+    --card: #ffffff;
+    --card-foreground: #09090b;
+    --popover: #ffffff;
+    --popover-foreground: #09090b;
+    --primary: #16a34a;              /* Green-600 */
+    --primary-foreground: #ffffff;
+    --secondary: #f4f4f5;            /* Zinc-100 */
+    --secondary-foreground: #09090b;
+    --muted: #f4f4f5;
+    --muted-foreground: #71717a;     /* Zinc-500 */
+    --accent: #16a34a;
+    --accent-foreground: #ffffff;
+    --destructive: #dc2626;          /* Red-600 */
+    --destructive-foreground: #ffffff;
+    --border: #e4e4e7;               /* Zinc-200 */
+    --input: #f4f4f5;
+    --ring: #16a34a;
+    --chart-1: #16a34a;
+    --chart-2: #3b82f6;
+    --chart-3: #dc2626;
+    --chart-4: #f97316;
+    --chart-5: #8b5cf6;
+    --sidebar: #ffffff;
+    --sidebar-foreground: #09090b;
+    --sidebar-primary: #16a34a;
+    --sidebar-primary-foreground: #ffffff;
+    --sidebar-accent: #f4f4f5;
+    --sidebar-accent-foreground: #09090b;
+    --sidebar-border: #e4e4e7;
+    --sidebar-ring: #16a34a;
+  }
+
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground antialiased selection:bg-primary/30;
+    --glass-bg: rgba(17, 17, 19, 0.7);
+    --glass-border: rgba(255, 255, 255, 0.08);
+  }
+
+  /* ── Premium UI Utilities ── */
+  .glass-panel {
+    @apply backdrop-blur-xl border border-[var(--glass-border)] bg-[var(--glass-bg)];
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+  }
+
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .text-pretty {
+    text-wrap: pretty;
+  }
+
+  .num-tabular {
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Fondo Dinámico Sutil */
+  .bg-mesh {
+    background-image: 
+      radial-gradient(at 0% 0%, rgba(54, 214, 158, 0.05) 0px, transparent 50%),
+      radial-gradient(at 100% 100%, rgba(107, 138, 255, 0.05) 0px, transparent 50%);
+  }
+
+  /* Grano de película sutil */
+  .bg-grain {
+    position: relative;
+  }
+  .bg-grain::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0.02;
+    pointer-events: none;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+    z-index: 10;
+  }
 }
