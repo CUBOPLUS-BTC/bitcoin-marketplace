@@ -46,8 +46,13 @@ export default function Home() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {/* Card 1 */}
             <article className="bg-[#131316] rounded-xl overflow-hidden border border-[#48474c]/15 group hover:border-[#48474c]/30 transition-all">
-              <div className="h-48 bg-[#25252a] relative overflow-hidden">
-                <div className="absolute inset-0 bg-[#25252a] bg-gradient-to-br from-zinc-800 to-black opacity-80"></div>
+              <div className="h-48 relative overflow-hidden">
+                <img 
+                  src="/images/products/trezor.png" 
+                  alt="Trezor Safe 3" 
+                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
                 <div className="absolute top-3 right-3 bg-[#0e0e10]/80 backdrop-blur-md px-2 py-1 rounded border border-[#48474c]/30 flex items-center gap-1">
                   <span className="material-symbols-outlined text-[#ffb874] text-[16px]">verified</span>
                   <span className="text-[10px] font-semibold text-[#e7e4ea] uppercase">ESCROW</span>
@@ -77,8 +82,13 @@ export default function Home() {
 
             {/* Card 2 */}
             <article className="bg-[#131316] rounded-xl overflow-hidden border border-[#48474c]/15 group hover:border-[#48474c]/30 transition-all">
-              <div className="h-48 bg-[#25252a] relative overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-tr from-zinc-900 to-[#131316] opacity-80"></div>
+              <div className="h-48 relative overflow-hidden">
+                <img 
+                  src="/images/products/bitbox.png" 
+                  alt="BitBox02" 
+                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
                 <div className="absolute top-3 right-3 bg-[#0e0e10]/80 backdrop-blur-md px-2 py-1 rounded border border-[#48474c]/30 flex items-center gap-1">
                   <span className="material-symbols-outlined text-[#ffb874] text-[16px]">verified</span>
                   <span className="text-[10px] font-semibold text-[#e7e4ea] uppercase">ESCROW</span>
@@ -108,8 +118,13 @@ export default function Home() {
 
             {/* Card 3 */}
             <article className="bg-[#131316] rounded-xl overflow-hidden border border-[#48474c]/15 group hover:border-[#48474c]/30 transition-all">
-              <div className="h-48 bg-[#25252a] relative overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-b from-zinc-800 to-black opacity-80"></div>
+              <div className="h-48 relative overflow-hidden">
+                <img 
+                  src="/images/products/seedplate.png" 
+                  alt="Titanium Seed Plate" 
+                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
                 <div className="absolute top-3 right-3 bg-[#0e0e10]/80 backdrop-blur-md px-2 py-1 rounded border border-[#48474c]/30 flex items-center gap-1">
                   <span className="material-symbols-outlined text-[#ffb874] text-[16px]">verified</span>
                   <span className="text-[10px] font-semibold text-[#e7e4ea] uppercase">ESCROW</span>

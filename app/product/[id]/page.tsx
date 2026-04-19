@@ -1,14 +1,42 @@
 "use client";
 
 import React from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useParams } from "next/navigation";
 import { MarketplaceNavbar } from "@/components/layout/MarketplaceNavbar";
 import { MarketplaceFooter } from "@/components/layout/MarketplaceFooter";
 import { MultisigSetupForm } from "@/components/multisig/MultisigSetupForm";
 import { ShieldCheck, Star, ShieldAlert } from "lucide-react";
 
-export default function ProductDetailPage({ params }: { params: { id: string } }) {
+export default function ProductDetailPage() {
   const router = useRouter();
+  const params = useParams();
+  const id = typeof params?.id === 'string' ? params.id : '1';
+
+  const products: Record<string, any> = {
+    "1": {
+      name: "Trezor Safe 3 - Bitcoin Only Edition",
+      image: "/images/products/trezor.png",
+      price: "0.045",
+      seller: "@Satoshi_Nakamoto",
+      sellerPub: "02cc3a96860f4e3dfba60ed44436841893118471"
+    },
+    "2": {
+      name: "BitBox02 Bitcoin-only",
+      image: "/images/products/bitbox.png",
+      price: "0.021",
+      seller: "@HalFinney",
+      sellerPub: "03f6f059103c8c7f07018d9668bd52f53434698544ff87034c5409a4192d77d71f"
+    },
+    "3": {
+      name: "Titanium Seed Plate",
+      image: "/images/products/seedplate.png",
+      price: "0.015",
+      seller: "@CypherPunk99",
+      sellerPub: "026a0403306db49f78cd20f78943916298533cfc"
+    }
+  };
+
+  const product = products[id] || products["1"];
 
   const handleGenerate = () => {
     router.push("/dashboard");
@@ -25,15 +53,19 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
           {/* Left Column: Product Info (2/3) */}
           <section className="lg:col-span-8 flex flex-col gap-10">
             {/* Product Image */}
-            <div className="w-full aspect-[16/9] bg-[#131316] rounded-lg flex items-center justify-center overflow-hidden border border-[#48474c]/15 relative">
-              <div className="absolute inset-0 bg-gradient-to-br from-zinc-800 to-black opacity-80"></div>
-              <span className="material-symbols-outlined text-[#76757a] text-6xl relative z-10 font-light">memory</span>
+            <div className="w-full aspect-[16/9] bg-[#131316] rounded-lg flex items-center justify-center overflow-hidden border border-[#48474c]/15 relative shadow-2xl">
+              <img 
+                src={product.image} 
+                alt={product.name} 
+                className="w-full h-full object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
             </div>
 
             {/* Product Details */}
             <div className="flex flex-col gap-6">
               <h1 className="text-4xl md:text-5xl font-black tracking-tight text-[#e7e4ea] leading-tight">
-                Trezor Safe 3 - Bitcoin Only Edition
+                {product.name}
               </h1>
               
               {/* Seller & Reputation */}
@@ -43,7 +75,7 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
                     <span className="material-symbols-outlined text-[#acaab0] text-xl">person</span>
                   </div>
                   <div className="flex items-center gap-1.5">
-                    <span className="font-semibold text-lg text-[#e7e4ea] tracking-wide">@Satoshi_Nakamoto</span>
+                    <span className="font-semibold text-lg text-[#e7e4ea] tracking-wide">{product.seller}</span>
                     <ShieldCheck className="text-[#ffb874] w-5 h-5 fill-[#ffb874]" />
                   </div>
                 </div>
@@ -80,7 +112,7 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
               <div className="flex flex-col gap-2">
                 <span className="text-[10px] uppercase tracking-widest text-[#acaab0] font-bold">Total Price</span>
                 <div className="text-[#fe9821] text-5xl font-black tracking-tighter leading-none">
-                  0.04500000 <span className="text-2xl text-[#fe9821]/70 align-top">BTC</span>
+                  {product.price} <span className="text-2xl text-[#fe9821]/70 align-top">BTC</span>
                 </div>
               </div>
 
@@ -108,8 +140,8 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
               <div className="flex flex-col gap-6">
                  <MultisigSetupForm 
                     onGenerate={handleGenerate} 
-                    priceBtc="0.045"
-                    sellerPublicKey="02cc3a96860f4e3dfba60ed44436841893118471"
+                    priceBtc={product.price}
+                    sellerPublicKey={product.sellerPub}
                  />
               </div>
             </div>
