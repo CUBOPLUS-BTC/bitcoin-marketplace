@@ -1,6 +1,5 @@
 import React from 'react';
-import { X, AlertTriangle, Copy, Usb, Loader2 } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { X, ShieldCheck, Copy, Cpu, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 interface PSBTSignModalProps {
@@ -25,93 +24,102 @@ export function PSBTSignModal({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-background/40 backdrop-blur-md z-50 flex items-center justify-center p-4 overscroll-behavior-contain">
+    <div className="fixed inset-0 bg-black/60 backdrop-blur-md z-50 flex items-center justify-center p-4 overscroll-behavior-contain">
       {/* Modal Card */}
-      <div className="glass-panel w-full max-w-lg rounded-2xl shadow-2xl flex flex-col relative overflow-hidden animate-in zoom-in-95 fade-in duration-300">
+      <div className="glass-panel w-full max-w-lg rounded-2xl shadow-2xl flex flex-col relative overflow-hidden animate-in zoom-in-95 fade-in duration-300 border border-white/10">
         
+        {/* Glow Effect */}
+        <div className="absolute -top-24 -left-24 w-48 h-48 bg-[#ffb874]/10 blur-[100px] rounded-full"></div>
+        <div className="absolute -bottom-24 -right-24 w-48 h-48 bg-[#ffb874]/5 blur-[100px] rounded-full"></div>
+
         {/* Header */}
-        <div className="flex items-center justify-between p-6 pb-4">
-          <h2 className="text-xl font-bold tracking-tight text-foreground">
-            Revisar y Firmar PSBT
-          </h2>
+        <div className="flex items-center justify-between p-8 pb-4 relative">
+          <div>
+            <h2 className="text-xl font-bold tracking-tight text-[#e7e4ea]">
+              Autorizar Firma PSET
+            </h2>
+            <p className="text-[10px] uppercase font-bold tracking-widest text-[#acaab0] mt-1">
+              Liquid Layer 2 Transaction
+            </p>
+          </div>
           <button 
             onClick={onClose}
             disabled={isSigning}
-            className="text-muted-foreground hover:text-primary transition-colors focus:outline-none rounded-full p-1 disabled:opacity-30"
+            className="text-zinc-500 hover:text-[#ffb874] transition-colors focus:outline-none rounded-full p-1 disabled:opacity-30"
           >
             <X className="w-5 h-5" aria-hidden="true" />
           </button>
         </div>
 
         {/* Content Area */}
-        <div className="p-6 pt-2 space-y-6 flex-grow">
+        <div className="p-8 pt-2 space-y-6 flex-grow relative">
           {/* Summary Box */}
-          <div className="bg-secondary/30 rounded-lg p-5 border border-border">
-            <div className="space-y-4">
-              <div className="flex justify-between items-baseline border-b border-white/5 pb-3">
-                <span className="text-sm text-muted-foreground">Miner Fee</span>
-                <span className="font-mono text-sm text-foreground num-tabular">{minerFee}</span>
+          <div className="bg-black/40 rounded-xl p-6 border border-zinc-800/50 shadow-inner">
+            <div className="space-y-5">
+              <div className="flex justify-between items-baseline border-b border-zinc-800/50 pb-4">
+                <span className="text-xs font-bold uppercase tracking-widest text-zinc-500">Miner Fee (L2)</span>
+                <span className="font-mono text-sm text-[#ffb874] num-tabular">{minerFee}</span>
               </div>
-              <div className="flex flex-col space-y-1">
-                <span className="text-sm text-muted-foreground">Monto a Liberar</span>
-                <span className="text-2xl font-bold tracking-tight text-foreground num-tabular">
-                  {totalOutput} <span className="text-muted-foreground text-lg font-normal">BTC</span>
+              <div className="flex flex-col space-y-1 py-1">
+                <span className="text-xs font-bold uppercase tracking-widest text-zinc-500">Operación de Escrow</span>
+                <span className="text-3xl font-black tracking-tighter text-[#e7e4ea] num-tabular">
+                  {totalOutput}
                 </span>
+                <p className="text-[10px] text-zinc-500 font-medium">Libere los fondos mediante firma criptográfica de elementos.</p>
               </div>
             </div>
           </div>
 
           {/* Alert Box */}
-          <div className="rounded-lg border border-orange-500/20 bg-orange-500/5 p-4 flex items-start space-x-3">
-            <AlertTriangle className="text-orange-500 shrink-0 w-5 h-5 mt-0.5" />
-            <p className="text-xs text-orange-500 leading-relaxed font-medium">
-              Asegúrate de que la dirección de destino en tu wallet coincida con la mostrada abajo para evitar ataques de sustitución.
+          <div className="rounded-xl border border-[#ffb874]/20 bg-[#ffb874]/5 p-5 flex items-start space-x-4">
+            <ShieldCheck className="text-[#ffb874] shrink-0 w-6 h-6" />
+            <p className="text-xs text-[#e7e4ea]/80 leading-relaxed font-medium">
+              Usted está autorizando la liberación de activos en una dirección multifirma 2-de-3 coordinada por el protocolo. Verifique los detalles antes de proceder.
             </p>
           </div>
 
           {/* Destination Preview */}
-          <div className="flex flex-col space-y-2">
-            <span className="text-[10px] uppercase tracking-widest text-muted-foreground font-bold">
-              Dirección de Destino
+          <div className="flex flex-col space-y-3">
+            <span className="text-[10px] uppercase tracking-widest text-zinc-500 font-black">
+              Identificador de Destino
             </span>
             <div 
               onClick={() => {
                 navigator.clipboard.writeText(destinationAddress);
               }}
-              className="bg-background rounded-md px-3 py-2 border border-border flex justify-between items-center group cursor-pointer hover:border-primary/50 transition-colors"
+              className="bg-[#131316] rounded-lg px-4 py-3 border border-zinc-800 flex justify-between items-center group cursor-pointer hover:border-[#ffb874]/30 transition-all shadow-inner"
             >
-              <span className="font-mono text-xs text-foreground truncate pr-4">
+              <span className="font-mono text-[10px] text-zinc-400 truncate pr-4">
                 {destinationAddress}
               </span>
-              <Copy className="text-muted-foreground group-hover:text-primary transition-colors w-4 h-4" />
+              <Copy className="text-zinc-600 group-hover:text-[#ffb874] transition-colors w-4 h-4" />
             </div>
           </div>
         </div>
 
         {/* Footer Actions */}
-        <div className="bg-secondary/10 p-6 border-t border-border flex justify-end items-center space-x-4">
-          <Button 
-            variant="ghost" 
+        <div className="bg-black/20 p-8 border-t border-zinc-800 flex justify-end items-center space-x-6 relative">
+          <button 
             onClick={onClose}
             disabled={isSigning}
+            className="text-xs font-black uppercase tracking-widest text-zinc-500 hover:text-zinc-300 transition-colors disabled:opacity-30"
           >
-            Cancelar
-          </Button>
+            Abortar
+          </button>
           <Button 
-            variant="default" 
             onClick={onSign} 
             disabled={isSigning}
-            className="flex items-center gap-2 min-w-[160px]"
+            className="flex items-center gap-3 min-w-[200px] h-14 bg-[#ffb874] text-[#613500] font-black uppercase tracking-widest text-xs hover:bg-[#ffaa55] shadow-[0_0_20px_rgba(255,184,116,0.2)] border-none"
           >
             {isSigning ? (
               <>
-                <Loader2 className="w-4 h-4 animate-spin" /> 
-                Firmando…
+                <Loader2 className="w-5 h-5 animate-spin" /> 
+                Firmando...
               </>
             ) : (
               <>
-                Confirmar y Firmar
-                <Usb className="w-4 h-4" />
+                Autorizar Firmas
+                <Cpu className="w-5 h-5" />
               </>
             )}
           </Button>

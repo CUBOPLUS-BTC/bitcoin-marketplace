@@ -71,7 +71,7 @@ export default function Home() {
                     <span className="text-lg font-bold text-[#fe9821]">0.045 BTC</span>
                   </div>
                   <Link 
-                    href="/product/1" 
+                    href="/product/trezor-safe-3" 
                     className="bg-[#ffb874] text-[#613500] font-medium py-2 px-4 rounded hover:bg-[#e78603] transition-colors text-sm shadow-[0_2px_8px_rgba(255,184,116,0.15)]"
                   >
                     Comprar con Escrow
@@ -107,7 +107,7 @@ export default function Home() {
                     <span className="text-lg font-bold text-[#fe9821]">0.021 BTC</span>
                   </div>
                   <Link 
-                    href="/product/2"
+                    href="/product/bitbox-02"
                     className="bg-[#ffb874] text-[#613500] font-medium py-2 px-4 rounded hover:bg-[#e78603] transition-colors text-sm shadow-[0_2px_8px_rgba(255,184,116,0.15)]"
                   >
                     Comprar con Escrow
@@ -143,7 +143,7 @@ export default function Home() {
                     <span className="text-lg font-bold text-[#fe9821]">0.015 BTC</span>
                   </div>
                   <Link 
-                    href="/product/3"
+                    href="/product/titanium-seed-plate"
                     className="bg-[#ffb874] text-[#613500] font-medium py-2 px-4 rounded hover:bg-[#e78603] transition-colors text-sm shadow-[0_2px_8px_rgba(255,184,116,0.15)]"
                   >
                     Comprar con Escrow

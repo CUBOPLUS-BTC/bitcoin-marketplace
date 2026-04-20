@@ -10,24 +10,24 @@ import { ShieldCheck, Star, ShieldAlert } from "lucide-react";
 export default function ProductDetailPage() {
   const router = useRouter();
   const params = useParams();
-  const id = typeof params?.id === 'string' ? params.id : '1';
+  const id = typeof params?.id === 'string' ? params.id : 'trezor-safe-3';
 
   const products: Record<string, any> = {
-    "1": {
+    "trezor-safe-3": {
       name: "Trezor Safe 3 - Bitcoin Only Edition",
       image: "/images/products/trezor.png",
       price: "0.045",
       seller: "@Satoshi_Nakamoto",
       sellerPub: "02cc3a96860f4e3dfba60ed44436841893118471"
     },
-    "2": {
+    "bitbox-02": {
       name: "BitBox02 Bitcoin-only",
       image: "/images/products/bitbox.png",
       price: "0.021",
       seller: "@HalFinney",
       sellerPub: "03f6f059103c8c7f07018d9668bd52f53434698544ff87034c5409a4192d77d71f"
     },
-    "3": {
+    "titanium-seed-plate": {
       name: "Titanium Seed Plate",
       image: "/images/products/seedplate.png",
       price: "0.015",
@@ -36,7 +36,7 @@ export default function ProductDetailPage() {
     }
   };
 
-  const product = products[id] || products["1"];
+  const product = products[id] || products["trezor-safe-3"];
 
   const handleGenerate = () => {
     router.push("/dashboard");

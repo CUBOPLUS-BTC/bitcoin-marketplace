@@ -23,36 +23,39 @@ import {
 
 export default function DashboardPage() {
   const { 
-    contractParams, 
-    escrowState, 
-    fetchStatus, 
-    signPSBT,
-    isLoading 
+    trades,
+    activeEscrow,
+    fetchTrades,
+    fetchEscrow,
+    signPSET,
+    isLoading,
+    user
   } = useMultisigStore();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [selectedContractId, setSelectedContractId] = useState<string | null>(null);
+  const [selectedTradeId, setSelectedTradeId] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<'purchases' | 'sales' | 'disputes'>('purchases');
 
-  // Polling for status
+  // Initial data fetch
+  useEffect(() => {
+    fetchTrades();
+  }, [fetchTrades]);
+
+  // Polling for detail status if a trade is selected
   useEffect(() => {
     let interval: NodeJS.Timeout;
-    if (contractParams.id) {
-      if (!selectedContractId && activeTab === 'purchases') {
-        setSelectedContractId(contractParams.id);
-        setIsSidebarOpen(true);
-      }
-      fetchStatus();
-      interval = setInterval(fetchStatus, 10000);
+    if (selectedTradeId) {
+      fetchEscrow(selectedTradeId);
+      interval = setInterval(() => fetchEscrow(selectedTradeId), 5000);
     }
     return () => clearInterval(interval);
-  }, [contractParams.id, fetchStatus, selectedContractId, activeTab]);
+  }, [selectedTradeId, fetchEscrow]);
 
   const handleSignTransaction = async () => {
-    const dummyPsbtHex = "70736274ff010074...dummy_psbt_hex"; 
+    if (!selectedTradeId || !activeEscrow?.pset_base64) return;
     try {
-      await signPSBT(dummyPsbtHex);
+      await signPSET(selectedTradeId, activeEscrow.pset_base64);
       setIsModalOpen(false);
     } catch (e) {}
   };
@@ -60,37 +63,15 @@ export default function DashboardPage() {
   const handleTabChange = (tab: 'purchases' | 'sales' | 'disputes') => {
     setActiveTab(tab);
     setIsSidebarOpen(false);
-    setSelectedContractId(null);
+    setSelectedTradeId(null);
   };
 
-  const currentContract = (selectedContractId && contractParams.id === selectedContractId) ? {
-    id: contractParams.id!,
-    amount: escrowState.amountExpected,
-    isFunded: escrowState.isFunded,
-    multisigAddress: contractParams.multisigAddress,
-    buyerPubkey: contractParams.buyerPubkey,
-    sellerPubkey: contractParams.sellerPubkey,
-    signaturesRequired: escrowState.signaturesRequired,
-    signaturesAcquired: escrowState.signaturesAcquired
-  } : selectedContractId === 'ORD-7741' ? {
-    id: 'ORD-7741',
-    amount: 2100000,
-    isFunded: true,
-    multisigAddress: 'bc1q7...mock_bitbox',
-    buyerPubkey: '02...',
-    sellerPubkey: '03...',
-    signaturesRequired: 2,
-    signaturesAcquired: 2
-  } : selectedContractId === 'ORD-6512' ? {
-    id: 'ORD-6512',
-    amount: 1500000,
-    isFunded: true,
-    multisigAddress: 'bc1q9...mock_titanium',
-    buyerPubkey: '02...',
-    sellerPubkey: '03...',
-    signaturesRequired: 2,
-    signaturesAcquired: 2
-  } : null;
+  // Filter trades based on tab and logged in user
+  const filteredTrades = trades.filter(t => {
+    if (activeTab === 'purchases') return t.buyer_id === user?.id;
+    if (activeTab === 'sales') return t.seller_id === user?.id;
+    return false;
+  });
 
   const pageHeaders = {
     purchases: { title: "Mis Compras", subtitle: "Operaciones donde eres el comprador" },
@@ -106,7 +87,7 @@ export default function DashboardPage() {
           <Link href="/" className="text-xl font-bold tracking-tighter text-[#ffb874] uppercase">
             Sovereign Ledger
           </Link>
-          <p className="text-[10px] uppercase tracking-wider text-[#acaab0] mt-1 font-semibold">Verified Account</p>
+          <p className="text-[10px] uppercase tracking-wider text-[#acaab0] mt-1 font-semibold">{user?.display_name || 'Verified Account'}</p>
         </div>
         
         <nav className="flex-1 flex flex-col gap-2">
@@ -140,9 +121,11 @@ export default function DashboardPage() {
           </button>
         </nav>
         
-        <button className="mt-6 w-full py-3 bg-[#ffb874] text-[#613500] font-semibold text-sm rounded transition-colors hover:bg-[#e78603]">
-          Connect Wallet
-        </button>
+        {!user && (
+          <button className="mt-6 w-full py-3 bg-[#ffb874] text-[#613500] font-semibold text-sm rounded transition-colors hover:bg-[#e78603]">
+            Login Session
+          </button>
+        )}
       </aside>
 
       {/* Main Content Wrapper */}
@@ -150,14 +133,14 @@ export default function DashboardPage() {
         {/* TopAppBar */}
         <header className="bg-zinc-950/80 backdrop-blur-xl font-['Inter'] uppercase tracking-widest text-[10px] w-full h-16 border-b border-zinc-800/30 sticky top-0 z-50 flex items-center justify-between px-8 shadow-2xl">
           <div className="flex items-center gap-4">
-            <span className="text-[#ffb874] font-bold text-sm tracking-wider">Escrow Terminal</span>
+            <span className="text-[#ffb874] font-bold text-sm tracking-wider">Platform Terminal</span>
           </div>
           <div className="flex items-center gap-6">
             <div className="relative hidden sm:block">
               <Search className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 w-4 h-4" />
               <input 
                 className="bg-[#25252a] border-none rounded-none w-48 py-2 pl-3 pr-10 text-[#e7e4ea] placeholder:text-zinc-500 focus:ring-1 focus:ring-[#ffb874] text-[10px] uppercase tracking-wider" 
-                placeholder="SEARCH TXID..." 
+                placeholder="SEARCH TRADE ID..." 
                 type="text" 
               />
             </div>
@@ -190,158 +173,52 @@ export default function DashboardPage() {
             {/* Escrow List Container */}
             <div className="flex flex-col gap-8 w-full max-w-5xl">
               
-              {/* PURCHASES TAB */}
-              {activeTab === 'purchases' && (
-                <>
-                  {/* Real Purchase */}
-                  {contractParams.id && contractParams.buyerPubkey && (
-                    <div 
-                      onClick={() => { setSelectedContractId(contractParams.id!); setIsSidebarOpen(true); }}
-                      className={`bg-[#131316] p-6 rounded-lg relative overflow-hidden group cursor-pointer border ${selectedContractId === contractParams.id ? 'border-[#ffb874]/50' : 'border-transparent'}`}
-                    >
-                      <div className="absolute inset-0 bg-[#1f1f23] opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
-                      <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 relative z-10">
-                        <div className="flex items-center gap-6">
-                            <div className="w-12 h-12 bg-[#25252a] flex items-center justify-center rounded">
-                                <Key className="text-[#ffb874] w-6 h-6" />
-                            </div>
-                            <div>
-                                <div className="flex items-baseline gap-3 mb-1">
-                                    <span className="text-lg font-semibold text-[#e7e4ea]">Trezor Safe 3</span>
-                                    <span className="text-[10px] uppercase tracking-wider text-[#acaab0]">#{contractParams.id.substring(0, 8)}</span>
-                                </div>
-                                <div className="flex items-center gap-2 text-sm text-[#acaab0]">
-                                    <ShoppingBag className="w-4 h-4" />
-                                    <span>Rol: Comprador</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="flex items-center gap-12">
-                            <div className="text-right">
-                                <span className="block text-[10px] uppercase tracking-wider text-[#acaab0] mb-1 font-bold">Valor Asegurado</span>
-                                <span className="text-xl font-bold text-[#fe9821]">{(escrowState.amountExpected / 100_000_000).toFixed(4)} BTC</span>
-                            </div>
-                            <div className="flex flex-col items-end gap-3 min-w-[140px]">
-                                <span className={`inline-flex items-center px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider rounded ${escrowState.isFunded ? 'bg-[#f1eeaa] text-[#5a5924]' : 'bg-[#25252a] text-[#ffb874] border border-[#ffb874]/20'}`}>
-                                    {escrowState.isFunded ? 'Activo' : 'Esperando Fondeo'}
-                                </span>
-                                <span className="text-xs font-semibold uppercase tracking-wider text-[#ffb874] flex items-center gap-1 group-hover:translate-x-1 duration-200">
-                                    Ver Contrato <ChevronRight className="w-4 h-4" />
-                                </span>
-                            </div>
-                        </div>
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Mock Purchase */}
-                  <div 
-                    onClick={() => { setSelectedContractId('ORD-6512'); setIsSidebarOpen(true); }}
-                    className={`bg-[#131316] p-6 rounded-lg relative overflow-hidden group opacity-75 hover:opacity-100 transition-all cursor-pointer border ${selectedContractId === 'ORD-6512' ? 'border-zinc-500/50' : 'border-transparent'}`}
-                  >
-                    <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 relative z-10">
-                      <div className="flex items-center gap-6">
-                        <div className="w-12 h-12 bg-[#25252a] flex items-center justify-center rounded">
-                          <Save className="text-zinc-500 w-6 h-6" />
-                        </div>
-                        <div>
-                          <div className="flex items-baseline gap-3 mb-1">
-                            <span className="text-lg font-semibold text-[#e7e4ea]">Titanium Seed</span>
-                            <span className="text-[10px] uppercase tracking-wider text-[#acaab0]">#ORD-6512</span>
-                          </div>
-                          <div className="flex items-center gap-2 text-sm text-[#acaab0]">
-                            <ShoppingBag className="w-4 h-4" />
-                            <span>Rol: Comprador</span>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-12">
-                        <div className="text-right">
-                          <span className="block text-[10px] uppercase tracking-wider text-[#acaab0] mb-1 font-bold">Valor Asegurado</span>
-                          <span className="text-xl font-bold text-zinc-500">0.015 BTC</span>
-                        </div>
-                        <div className="flex flex-col items-end gap-3 min-w-[140px]">
-                          <span className="inline-flex items-center px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider bg-[#3b3b3e] text-[#c8c6c9] rounded">
-                            Completado
-                          </span>
-                          <span className="text-xs font-semibold uppercase tracking-wider text-zinc-400 flex items-center gap-1 group-hover:translate-x-1 duration-200">
-                             Ver Historial <History className="w-4 h-4" />
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </>
+              {filteredTrades.length === 0 && !isLoading && (
+                <div className="bg-[#131316] p-12 rounded-lg border border-dashed border-[#48474c]/30 text-center">
+                  <p className="text-[#acaab0] uppercase tracking-widest text-xs font-bold">No hay operaciones que mostrar</p>
+                </div>
               )}
 
-              {/* SALES TAB */}
-              {activeTab === 'sales' && (
-                <>
-                  {/* Real Sale (If user is seller) */}
-                  {contractParams.id && contractParams.sellerPubkey && (
-                    <div 
-                      onClick={() => { setSelectedContractId(contractParams.id!); setIsSidebarOpen(true); }}
-                      className={`bg-[#131316] p-6 rounded-lg relative overflow-hidden group cursor-pointer border ${selectedContractId === contractParams.id ? 'border-[#ffb874]/50' : 'border-transparent'}`}
-                    >
-                        {/* Similar Row structure... */}
-                        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 relative z-10">
-                            <div className="flex items-center gap-6">
-                                <div className="w-12 h-12 bg-[#25252a] flex items-center justify-center rounded">
-                                    <Tag className="text-[#ffb874] w-6 h-6" />
-                                </div>
-                                <div className="flex flex-col">
-                                    <span className="text-lg font-semibold text-[#e7e4ea]">Operación Activa</span>
-                                    <span className="text-[10px] uppercase tracking-wider text-[#acaab0]">#{contractParams.id.substring(0, 8)}</span>
-                                </div>
-                            </div>
-                            <div className="flex items-center gap-12">
-                                <span className="text-xl font-bold text-[#fe9821]">{(escrowState.amountExpected / 100_000_000).toFixed(4)} BTC</span>
-                                <span className="text-xs font-semibold uppercase tracking-wider text-[#ffb874]">Ver Contrato</span>
-                            </div>
-                        </div>
-                    </div>
-                  )}
-
-                  {/* Mock Sale */}
-                  <div 
-                    onClick={() => { setSelectedContractId('ORD-7741'); setIsSidebarOpen(true); }}
-                    className={`bg-[#131316] p-6 rounded-lg relative overflow-hidden group cursor-pointer border ${selectedContractId === 'ORD-7741' ? 'border-[#ffb874]/50' : 'border-transparent'}`}
-                  >
-                    <div className="absolute inset-0 bg-[#1f1f23] opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
-                    <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 relative z-10">
-                      <div className="flex items-center gap-6">
+              {filteredTrades.map((trade) => (
+                <div 
+                  key={trade.id}
+                  onClick={() => { setSelectedTradeId(trade.id); setIsSidebarOpen(true); }}
+                  className={`bg-[#131316] p-6 rounded-lg relative overflow-hidden group cursor-pointer border ${selectedTradeId === trade.id ? 'border-[#ffb874]/50' : 'border-transparent'}`}
+                >
+                  <div className="absolute inset-0 bg-[#1f1f23] opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
+                  <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 relative z-10">
+                    <div className="flex items-center gap-6">
                         <div className="w-12 h-12 bg-[#25252a] flex items-center justify-center rounded">
-                          <Cpu className="text-[#ffb874] w-6 h-6" />
+                            <Key className="text-[#ffb874] w-6 h-6" />
                         </div>
                         <div>
-                          <div className="flex items-baseline gap-3 mb-1">
-                            <span className="text-lg font-semibold text-[#e7e4ea]">BitBox02</span>
-                            <span className="text-[10px] uppercase tracking-wider text-[#acaab0]">#ORD-7741</span>
-                          </div>
-                          <div className="flex items-center gap-2 text-sm text-[#acaab0]">
-                            <ShoppingBag className="w-4 h-4" />
-                            <span>Rol: Vendedor</span>
-                          </div>
+                            <div className="flex items-baseline gap-3 mb-1">
+                                <span className="text-lg font-semibold text-[#e7e4ea]">Liquid Escrow Trade</span>
+                                <span className="text-[10px] uppercase tracking-wider text-[#acaab0]">#{trade.id.substring(0, 8)}</span>
+                            </div>
+                            <div className="flex items-center gap-2 text-sm text-[#acaab0]">
+                                <ShoppingBag className="w-4 h-4" />
+                                <span className="capitalize">{trade.status}</span>
+                            </div>
                         </div>
-                      </div>
-                      <div className="flex items-center gap-12">
+                    </div>
+                    <div className="flex items-center gap-12">
                         <div className="text-right">
-                          <span className="block text-[10px] uppercase tracking-wider text-[#acaab0] mb-1 font-bold">Valor Asegurado</span>
-                          <span className="text-xl font-bold text-[#fe9821]">0.021 BTC</span>
+                            <span className="block text-[10px] uppercase tracking-wider text-[#acaab0] mb-1 font-bold">Valor Segurado</span>
+                            <span className="text-xl font-bold text-[#fe9821]">{(trade.quantity * trade.price_sat / 100_000_000).toFixed(4)} BTC</span>
                         </div>
                         <div className="flex flex-col items-end gap-3 min-w-[140px]">
-                          <span className="inline-flex items-center px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider bg-[#f1eeaa] text-[#5a5924] rounded">
-                            Activo
-                          </span>
-                          <span className="text-xs font-semibold uppercase tracking-wider text-[#ffb874] flex items-center gap-1 group-hover:translate-x-1 duration-200">
-                            Ver Contrato <ChevronRight className="w-4 h-4" />
-                          </span>
+                            <span className={`inline-flex items-center px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider rounded ${trade.status === 'settled' ? 'bg-[#f1eeaa] text-[#5a5924]' : 'bg-[#25252a] text-[#ffb874] border border-[#ffb874]/20'}`}>
+                                {trade.status === 'settled' ? 'Completado' : 'Pendiente'}
+                            </span>
+                            <span className="text-xs font-semibold uppercase tracking-wider text-[#ffb874] flex items-center gap-1 group-hover:translate-x-1 duration-200">
+                                Ver Detalles <ChevronRight className="w-4 h-4" />
+                            </span>
                         </div>
-                      </div>
                     </div>
                   </div>
-                </>
-              )}
+                </div>
+              ))}
 
               {/* DISPUTES TAB */}
               {activeTab === 'disputes' && (
@@ -365,7 +242,7 @@ export default function DashboardPage() {
             {isSidebarOpen && (
               <div className="p-6 h-full flex flex-col">
                 <div className="flex justify-between items-center mb-8">
-                  <h3 className="text-lg font-bold text-[#e7e4ea]">Contract Details</h3>
+                  <h3 className="text-lg font-bold text-[#e7e4ea]">Trade Details</h3>
                   <button 
                     onClick={() => setIsSidebarOpen(false)}
                     className="text-zinc-500 hover:text-white transition-colors"
@@ -375,26 +252,43 @@ export default function DashboardPage() {
                 </div>
                 
                 <div className="flex-1 overflow-y-auto">
-                  {currentContract ? (
+                  {activeEscrow ? (
                     <div className="space-y-6">
                        <EscrowStatusCard 
-                        orderId={currentContract.id.substring(0, 8)}
-                        btcAmount={(currentContract.amount / 100_000_000).toFixed(8)}
-                        usdValue={(currentContract.amount * 0.0006).toLocaleString(undefined, { minimumFractionDigits: 2 })}
-                        signaturesRequired={currentContract.signaturesRequired}
-                        signaturesAcquired={currentContract.signaturesAcquired}
+                        orderId={activeEscrow.trade_id.substring(0, 8)}
+                        btcAmount="0.00000000" // Should be trade quantity
+                        usdValue="0.00"
+                        signaturesRequired={2}
+                        signaturesAcquired={(activeEscrow.buyer_signed ? 1 : 0) + (activeEscrow.seller_signed ? 1 : 0)}
                         onSignAction={() => setIsModalOpen(true)}
+                        status={activeEscrow.status}
                       />
                       
                       <div className="p-4 bg-[#000000]/50 rounded-lg border border-[#48474c]/30 font-mono text-[10px] space-y-2">
-                         <p className="text-[#acaab0] uppercase font-bold">Dirección de Red Escrow:</p>
-                         <p className="text-[#ffb874] break-all">{currentContract.multisigAddress || 'N/A'}</p>
+                         <p className="text-[#acaab0] uppercase font-bold">Dirección Liquid Multisig:</p>
+                         <p className="text-[#ffb874] break-all">{activeEscrow.multisig_address || 'Derivando...'}</p>
+                      </div>
+
+                      <div className="p-4 bg-zinc-900 rounded-lg border border-zinc-800 text-[10px] space-y-2">
+                        <p className="text-zinc-500 uppercase font-bold">Estado de Firmas:</p>
+                        <div className="flex justify-between">
+                          <span>Comprador</span>
+                          <span className={activeEscrow.buyer_signed ? "text-green-500" : "text-yellow-500"}>
+                            {activeEscrow.buyer_signed ? "Signed" : "Pending"}
+                          </span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span>Vendedor</span>
+                          <span className={activeEscrow.seller_signed ? "text-green-500" : "text-yellow-500"}>
+                            {activeEscrow.seller_signed ? "Signed" : "Pending"}
+                          </span>
+                        </div>
                       </div>
                     </div>
                   ) : (
                     <div className="flex-1 border-2 border-dashed border-[#48474c]/30 rounded flex items-center justify-center p-8 bg-[#000000]/50 h-64">
                       <p className="text-sm text-[#acaab0] font-mono text-center uppercase tracking-wider">
-                        Seleccione un contrato<br />para ver detalles
+                        Cargando Detalles...
                       </p>
                     </div>
                   )}
@@ -410,9 +304,9 @@ export default function DashboardPage() {
         onClose={() => setIsModalOpen(false)}
         onSign={handleSignTransaction}
         isSigning={isLoading}
-        minerFee="0.00003200 BTC"
-        totalOutput={(escrowState.amountExpected / 100_000_000).toFixed(8)}
-        destinationAddress={contractParams.sellerPubkey ? "bc1q...Destination" : "Waiting for Setup..."}
+        minerFee="0.00000180 BTC (L2)"
+        totalOutput="Liquid PSET Release"
+        destinationAddress="Managed by Protocol"
       />
     </div>
   );
