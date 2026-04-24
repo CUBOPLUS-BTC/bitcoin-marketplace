@@ -1,15 +1,10 @@
 import type { LiquidAsset, LiquidAddress } from '@/types/liquid';
 
+import type { components } from '@/types/tokenization-api';
+
 // ─── Platform Schemas (Aligning with tokenization services) ───
 
-export interface AssetOut {
-  id: string;
-  name: string;
-  description: string;
-  category: string;
-  valuation_sat: number;
-  status: string;
-}
+export type AssetOut = components['schemas']['AssetOut'];
 
 export interface TradeOut {
   id: string;
