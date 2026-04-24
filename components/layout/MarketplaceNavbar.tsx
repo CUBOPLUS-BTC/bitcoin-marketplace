@@ -42,16 +42,30 @@ export function MarketplaceNavbar() {
             />
           </div>
           
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2">
               {!user ? (
-                <button 
-                  onClick={() => login('demo@example.com', 'password')}
-                  className="bg-zinc-800 text-[#acaab0] hover:text-[#e7e4ea] border border-zinc-700 hover:border-zinc-600 font-black text-[10px] uppercase tracking-widest py-2.5 px-6 rounded transition-all duration-300"
-                >
-                  Login Demo
-                </button>
+                <>
+                  <button 
+                    onClick={() => login('demo@example.com', 'Password123!')}
+                    className="bg-zinc-800 text-[#acaab0] hover:text-[#e7e4ea] border border-zinc-700 hover:border-zinc-600 font-black text-[10px] uppercase tracking-widest py-2 px-3 rounded transition-all duration-300"
+                  >
+                    Comprador
+                  </button>
+                  <button 
+                    onClick={() => login('seller@example.com', 'Password123!')}
+                    className="bg-zinc-800 text-[#acaab0] hover:text-[#e7e4ea] border border-zinc-700 hover:border-zinc-600 font-black text-[10px] uppercase tracking-widest py-2 px-3 rounded transition-all duration-300"
+                  >
+                    Vendedor
+                  </button>
+                  <button 
+                    onClick={() => login('admin@example.com', 'Password123!')}
+                    className="bg-zinc-800 text-[#acaab0] hover:text-[#e7e4ea] border border-zinc-700 hover:border-zinc-600 font-black text-[10px] uppercase tracking-widest py-2 px-3 rounded transition-all duration-300"
+                  >
+                    Admin
+                  </button>
+                </>
               ) : (
-                <div className="hidden lg:flex flex-col items-end">
+                <div className="hidden lg:flex flex-col items-end mr-4">
                   <span className="text-[10px] uppercase font-black text-zinc-500 tracking-widest">Connected as</span>
                   <span className="text-[#e7e4ea] font-bold text-xs">{user.display_name}</span>
                 </div>

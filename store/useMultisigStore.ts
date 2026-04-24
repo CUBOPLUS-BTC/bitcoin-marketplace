@@ -70,15 +70,15 @@ export const useMultisigStore = create<MultisigStore>((set, get) => ({
       const response = await multisigApi.login(email, password);
       set({ user: response.user, isLoading: false });
 
-      // Auto-connect mock wallet for demo user to enable UI buttons without extension
-      if (email === 'demo@example.com') {
+      // Auto-connect mock wallet for demo users to enable UI buttons without extension
+      if (['demo@example.com', 'seller@example.com', 'admin@example.com'].includes(email)) {
         set((state) => ({
           wallet: {
             ...state.wallet,
             isConnected: true,
             address: 'lq1qq2pzezw2h8f4t9k5n5k5k5k5k5k5k5k5k5k5k5', // Mock Liquid Address
             network: 'testnet',
-            role: 'buyer',
+            role: email === 'seller@example.com' ? 'seller' : 'buyer',
           }
         }));
       }
@@ -118,7 +118,7 @@ export const useMultisigStore = create<MultisigStore>((set, get) => ({
         side: 'buy',
         quantity,
         price_sat: priceSat,
-        order_type: 'market',
+        order_type: 'limit',
       });
       
       // The response.id here is the order ID, but for the escrow dashboard
@@ -138,7 +138,7 @@ export const useMultisigStore = create<MultisigStore>((set, get) => ({
     set({ isLoading: true });
     try {
       const trades = await multisigApi.getTrades();
-      set({ trades, isLoading: false });
+      set({ trades: trades || [], isLoading: false });
     } catch (err: unknown) {
       set({ isLoading: false });
     }
@@ -148,6 +148,16 @@ export const useMultisigStore = create<MultisigStore>((set, get) => ({
     set({ isLoading: true, error: null });
     try {
       const escrow = await multisigApi.getEscrowByTrade(tradeId);
+      
+      // Demo Mode: Overlay mocked signatures if they exist
+      const userEmail = get().user?.email;
+      if (userEmail && ['demo@example.com', 'seller@example.com', 'admin@example.com'].includes(userEmail)) {
+        const mockedEscrows = JSON.parse(localStorage.getItem('mocked_escrows') || '{}');
+        if (mockedEscrows[tradeId]) {
+          Object.assign(escrow, mockedEscrows[tradeId]);
+        }
+      }
+
       set({ activeEscrow: escrow, isLoading: false });
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'Escrow fetch failed';
@@ -158,18 +168,35 @@ export const useMultisigStore = create<MultisigStore>((set, get) => ({
   signPSET: async (tradeId, psetBase64) => {
     set({ isLoading: true, error: null });
     try {
-      let signedPsetBase64 = psetBase64;
-      
-      // If we are using the mock wallet, we skip the real expansion/signing call
-      if (get().user?.email === 'demo@example.com') {
-        console.log('Demo Mode: Simulating PSET signature');
-        // In a real PSET we would need to actually sign, but for the platform 
-        // to move forward, we send the base64 back as 'signed' 
-        // (Note: The backend might reject it if it validates the signature, 
-        // but for the UI flow demonstration this unblocks the state)
-      } else {
-        signedPsetBase64 = await signEscrowPSBT(psetBase64);
+      // Demo Mode: Mock the entire signing flow since we don't have real Liquid funds
+      const userEmail = get().user?.email;
+      if (userEmail && ['demo@example.com', 'seller@example.com', 'admin@example.com'].includes(userEmail)) {
+        console.log('Demo Mode: Simulating PSET signature and backend release');
+        
+        const mockedEscrows = JSON.parse(localStorage.getItem('mocked_escrows') || '{}');
+        mockedEscrows[tradeId] = {
+            buyer_signed: true,
+            seller_signed: true, // Auto-sign seller for the demo
+            status: 'released'
+        };
+        localStorage.setItem('mocked_escrows', JSON.stringify(mockedEscrows));
+        
+        set((state) => ({
+            activeEscrow: state.activeEscrow ? {
+                ...state.activeEscrow,
+                ...mockedEscrows[tradeId]
+            } : null,
+            isLoading: false
+        }));
+        
+        // Also update the trade status to settled in the local trades list
+        set((state) => ({
+           trades: state.trades.map(t => t.id === tradeId ? { ...t, status: 'settled' } : t)
+        }));
+        return;
       }
+      
+      const signedPsetBase64 = await signEscrowPSBT(psetBase64);
       
       // 2. Push to backend
       await multisigApi.signEscrow(tradeId, signedPsetBase64);

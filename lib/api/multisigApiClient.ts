@@ -33,7 +33,7 @@ export interface OrderCreateRequest {
   side: 'buy' | 'sell';
   quantity: number;
   price_sat: number;
-  order_type?: 'market' | 'limit';
+  order_type?: 'limit' | 'stop_limit';
 }
 
 export interface SignEscrowRequest {
@@ -96,15 +96,21 @@ class MultisigApiClient {
       headers['Authorization'] = `Bearer ${this.token}`;
     }
 
-    const response = await fetch(`${this.baseUrl}${path}`, {
-      ...options,
-      headers,
-    });
+    let response: Response;
+    try {
+      response = await fetch(`${this.baseUrl}${path}`, {
+        ...options,
+        headers,
+      });
+    } catch (error) {
+      throw new Error('No se pudo conectar con el servidor (API no disponible).');
+    }
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({ error: { message: 'Unknown error' } }));
+      console.error('API Error:', errorData); // Log the full error for debugging
       const detail = errorData.error?.message || errorData.detail || `Request failed with status ${response.status}`;
-      throw new Error(this.sanitizeError(detail));
+      throw new Error(this.sanitizeError(typeof detail === 'string' ? detail : JSON.stringify(detail)));
     }
 
     return response.json();
@@ -117,18 +123,21 @@ class MultisigApiClient {
   }
 
   async placeOrder(payload: OrderCreateRequest): Promise<{ id: string }> {
-    return this.request('/marketplace/orders', {
+    const response = await this.request<{ order: { id: string } }>('/marketplace/orders', {
       method: 'POST',
       body: JSON.stringify(payload),
     });
+    return response.order;
   }
 
   async getTrades(): Promise<TradeOut[]> {
-    return this.request('/marketplace/trades');
+    const response = await this.request<{ trades: TradeOut[] }>('/marketplace/trades');
+    return response.trades;
   }
 
   async getEscrowByTrade(tradeId: string): Promise<EscrowOut> {
-    return this.request(`/marketplace/escrows/${tradeId}`);
+    const response = await this.request<{ escrow: EscrowOut }>(`/marketplace/escrows/${tradeId}`);
+    return response.escrow;
   }
 
   async signEscrow(tradeId: string, pset: string): Promise<{ message: string }> {
