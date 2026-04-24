@@ -53,9 +53,9 @@ export default function DashboardPage() {
   }, [selectedTradeId, fetchEscrow]);
 
   const handleSignTransaction = async () => {
-    if (!selectedTradeId || !activeEscrow?.pset_base64) return;
+    if (!selectedTradeId || !activeEscrow) return;
     try {
-      await signPSET(selectedTradeId, activeEscrow.pset_base64);
+      await signPSET(selectedTradeId, (activeEscrow as any).pset_base64 || 'demo-mock-pset');
       setIsModalOpen(false);
     } catch (e) {}
   };
@@ -68,6 +68,7 @@ export default function DashboardPage() {
 
   // Filter trades based on tab and logged in user
   const filteredTrades = trades.filter(t => {
+    if (user?.role === 'admin') return true; // Admins see everything
     if (activeTab === 'purchases') return t.buyer_id === user?.id;
     if (activeTab === 'sales') return t.seller_id === user?.id;
     return false;
